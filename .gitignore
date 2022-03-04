@@ -2,3 +2,5 @@
 /session/
 /test/
 /.dcignore
+/blacklist.db
+/package-lock.json
