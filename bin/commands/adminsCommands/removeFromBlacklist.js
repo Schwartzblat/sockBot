@@ -19,12 +19,12 @@ const procCommand = async (message, sock) => {
         return;
     }
     let sql;
-    if(getContentType(message) === "extendedTextMessage" && message.message?.extendedTextMessage?.contextInfo?.mentionedJid?.length>0){
+    if(message.message?.extendedTextMessage?.contextInfo?.mentionedJid?.length>0){
         const phone = message.message.extendedTextMessage.contextInfo.mentionedJid[0].split("@")[0];
-        sql = "delete from blacklist where phone="+phone;
+        sql = "delete from blacklist where phone=\""+phone+"\"";
     }else{
         const phone = parsePhone(removeFirstWord(message.body));
-        sql = "delete from blacklist where phone="+parsePhone(phone);
+        sql = "delete from blacklist where phone=\""+parsePhone(phone)+"\"";
     }
 
     if(!sql){

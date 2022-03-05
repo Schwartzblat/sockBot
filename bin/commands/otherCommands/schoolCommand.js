@@ -67,10 +67,11 @@ const findSchool = async (schoolName) => {
 };
 
 /**
- * @param {WAWebJS.Message} message
+ * @param {proto.IWebMessageInfo} message
+ * @param {makeWASocket} sock
  * @return {Promise<void>}
  */
-const procCommand = async (message) => {
+const procCommand = async (message, sock) => {
   const schoolName = removeFirstWord(message.body);
   const schoolId = await findSchool(schoolName);
   if (!schoolId || schoolId === -1){
@@ -80,10 +81,21 @@ const procCommand = async (message) => {
   if(!response || response.status !== 200) {
     return;
   }
-  console.log(response.data)
+  const data = response.data;
+  let output = "";
+  output += "שם: "+data?.['mosadGenaralData']?.['SHEM_MOSAD']+'\n';
+  output += "פיקוח: "+data?.['mosadYearData']?.['PIKOH_YY']+'\n';
+  output += "מספר תלמידים: "+(data?.['mosadYearData']?.['BANIM'] + data?.['mosadYearData']?.['BANOT'])+'\n';
+  output += "ממוצע תלמידים בכיתה: "+data?.['mosadYearData']?.['MISPAR_TALMIDIM_BE_KITA']+'\n';
+  output += "עלות תלמיד ממוצע: "+data?.['mosadYearData']?.['ALUT_TALMID']+' שקל\n';
 
+  const eduPictureResponse = await axios.get("https://shkifut.education.gov.il/api/data/mosadEduPic/?semelMosad="+schoolId).catch(err=>err);
+  if (!eduPictureResponse || eduPictureResponse.status !== 200){
+    return;
+  }
+  const eduData = eduPictureResponse.data;
+  output += "אחוז זכות לבגרות: "+ (eduData?.groups?.find(group=>group.Name==="בגרות")?.["Classes"]?.[1] || eduData?.groups?.find(group=>group.Name==="בגרות")?.["Classes"]?.[0])?.["Indexes"]?.[0]?.['Value'] + "%\n";
+  output += "אחוז גיוס: "+ (eduData?.groups?.[0]?.["Classes"]?.[0]?.["Indexes"]?.find(obj=>obj?.['Name']==="גיוס לשירות צבאי בנים")?.['Value']+eduData?.groups?.[0]?.["Classes"]?.[0]?.["Indexes"]?.find(obj=>obj?.['Name']==="גיוס לשירות צבאי בנות")?.['Value'])/2 + "%\n";
+  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
 };
 module.exports = procCommand;
-// procCommand({
-//   body: '!מידע אילון שרון'
-// })
