@@ -43,7 +43,7 @@ const procCommand = async (message, sock) => {
     const contextInfo = message.message.extendedTextMessage.contextInfo;
     const msg = {
       key: {
-        remoteJid: /*message.key.remoteJid*/ contextInfo.remoteJid,
+        remoteJid: message.key.remoteJid,
         id: contextInfo.stanzaId,
         participant: contextInfo.participant
       },
