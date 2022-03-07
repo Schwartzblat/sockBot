@@ -1,5 +1,6 @@
-const {decryptMediaMessageBuffer, getContentType, downloadContentFromMessage} = require("@adiwajshing/baileys");
+const {getContentType, downloadContentFromMessage} = require("@adiwajshing/baileys");
 const path = require("path");
+const axios = require("axios");
 const {tmpdir} = require("os");
 const Crypto = require("crypto");
 const fs = require("fs");
@@ -108,6 +109,15 @@ const gifToMp4 = async (gifDataUri) => {
     fs.unlinkSync(tempInputFile);
     return outputDataUri;
 };
+/**
+ *
+ * @param {string} url
+ * @return {Promise<Buffer>}
+ */
+const urlToBuffer = async (url) => {
+    const response = await axios.get(url,  { responseType: 'arraybuffer'})
+    return Buffer.from(response.data, "utf-8")
+}
 
 
 
@@ -118,5 +128,6 @@ module.exports = {
     imageToSticker,
     videoToSticker,
     downloadMedia,
-    dataURIToSticker
+    dataURIToSticker,
+    urlToBuffer
 }
