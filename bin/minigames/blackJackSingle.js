@@ -67,7 +67,7 @@ class BlackJackSingle extends MiniGame {
             }
             output += "ניקוד: " + this.dealer.getScore();
         }else{
-            output += this.dealer.getCards()[0].toString() + '(הפוך)';
+            output += this.dealer.getCards()[0].toString() + ', (הפוך)';
         }
         await this.sock.sendMessage(this.chatId, {text: output});
     }
