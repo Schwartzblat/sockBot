@@ -82,7 +82,7 @@ class BlackJackSingle extends MiniGame {
             await this.gameOver(false);
             return;
         }
-        if(!message?.message?.buttonsResponseMessage || message?.message?.buttonsResponseMessage?.contextInfo?.stanzaId !== this.actionId || this.actionId){
+        if(!message?.message?.buttonsResponseMessage || message?.message?.buttonsResponseMessage?.contextInfo?.stanzaId !== this.actionId || !this.actionId){
             return;
         }
 
