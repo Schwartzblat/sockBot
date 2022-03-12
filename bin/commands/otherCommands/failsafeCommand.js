@@ -1,7 +1,7 @@
 const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
 
 const isAdmin = (message) => {
-  return message.fromMe || privilegedUsers.includes(message.key.participant || message.key.remoteJid);
+  return message.key.fromMe || privilegedUsers.includes(message.key.participant || message.key.remoteJid);
 };
 
 /**

@@ -1,7 +1,6 @@
 const axios = require('axios').default;
 const translator = require('../../utils/translator').translateString;
 const ApiKeys = require('../../../config/apiKeys.json');
-const {getContentType} = require("@adiwajshing/baileys");
 /**
  * Process sentiment command.
  *
