@@ -19,7 +19,7 @@ const procCommand = async (message, sock) => {
     url: url,
   };
   const res = await axios.request(requestOptions).
-      catch((err) => console.log(err));
+      catch((err) => err);
   if (!res || res.status !== 200) {
     return;
   }
