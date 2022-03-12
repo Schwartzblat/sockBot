@@ -2,7 +2,6 @@ const axios = require('axios').default;
 const translator = require('../../utils/translator').translateString;
 const ApiKeys = require('../../../config/apiKeys.json');
 const {getContentType} = require("@adiwajshing/baileys");
-const faceRecognitionCommand = require('../funCommands/faceRecognitionCommand.js');
 /**
  * Process sentiment command.
  *
@@ -14,25 +13,12 @@ const procCommand = async (message, sock) => {
   const quotedMessage = message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
   if (!quotedMessage) {
     return;
-  }else if(getContentType(quotedMessage)==="imageMessage"){
-    const contextInfo = message.message.extendedTextMessage.contextInfo;
-    const msg = {
-      key: {
-        remoteJid: message.key.remoteJid,
-        id: contextInfo.stanzaId,
-        participant: contextInfo.participant
-      },
-      message: contextInfo.quotedMessage
-    }
-    await faceRecognitionCommand(msg, sock);
-    return;
   }
   const quote = quotedMessage.conversation;
   if (!quote) {
     return;
   }
   const translatedQuote = await translator(quote);
-  // Request part.
   const options = {
     method: 'POST',
     url: 'https://text-sentiment.p.rapidapi.com/analyze',
