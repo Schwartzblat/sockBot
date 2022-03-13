@@ -25,6 +25,9 @@ const isGroupAdmin = (participant, chat) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
+  if(!message.key.remoteJid.endsWith('@g.us')){
+    return;
+  }
   const chat =  await sock.groupMetadata(message.key.remoteJid);
   if(!isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", chat) && !isPrivileged(message) && !isGroupAdmin(message.key.participant, chat)){
     return;

@@ -6,20 +6,13 @@ const isAdmin = (message) => {
  * @param {string} text
  */
 const textToInviteV4 = (text)=>{
-  let obj = {
-    fromId: text.split("\n")[1].split("מ: ")[1].trim()+"@c.us",
-    toId: undefined,
+  const lines = text.split("\n");
+  return {
+    from: lines[1].split("from: ")[1].trim()+"@s.whatsapp.net",
+    groupJid: lines[2].split("groupJid: ")[1].trim(),
+    inviteCode: lines[3].split("inviteCode: ")[1].trim(),
+    inviteExpiration: lines[4].split("inviteExpiration: ")[1].trim(),
   };
-  for(let line of text.split("\n")){
-    if(line.search("inviteCodeExp")>=0){
-      obj.inviteCodeExp = parseInt(line.split(": ")[1].trim());
-    }else if(line.search("inviteCode")>=0){
-      obj.inviteCode = line.split("'")[1].trim();
-    }else if(line.search("groupId")>=0){
-      obj.groupId = line.split("'")[1].trim();
-    }
-  }
-  return obj;
 }
 const groupLinkPattern = new RegExp("http[s]?://chat\.whatsapp\.com/[a-zA-Z0-9]{5,30}");
 /**
@@ -28,6 +21,32 @@ const groupLinkPattern = new RegExp("http[s]?://chat\.whatsapp\.com/[a-zA-Z0-9]{
  */
 const textToGroupLink = (text)=>{
   return text.match(groupLinkPattern).toString();
+}
+
+/**
+ *
+ * @param {makeWASocket} sock
+ * @param {string} code
+ * @param {string} expiration
+ * @param {string} admin
+ * @param {string} groupJid
+ * @return {Promise<number|string|null>}
+ */
+const joinToGroupByInvite = async (sock, code, expiration, admin, groupJid)=> {
+  try {
+    const res = await sock.query({
+      tag: 'iq',
+      attrs: {
+        type: 'set',
+        xmlns: 'w:g2',
+        to: groupJid,
+      },
+      content:[{ tag: 'accept', attrs: { code , expiration, admin}}]
+    });
+    return res.attrs.from;
+  } catch (err) {
+    console.log('Unable to join group', err);
+  }
 }
 /**
  * add phone to blacklist.
@@ -45,7 +64,8 @@ const procCommand = async (message, sock) => {
     return;
   }
   if (quoted.split("\n")[0].split("סוג: ")[1] ==="הזמנה"){
-    // await client.acceptGroupV4Invite(textToInviteV4(quoted.body));
+    const inviteMessage = textToInviteV4(quoted);
+    await joinToGroupByInvite(sock, inviteMessage.inviteCode, inviteMessage.inviteExpiration, inviteMessage.from, inviteMessage.groupJid);
   }else if(quoted.split("\n")[0].split("סוג: ")[1] ===("קישור")){
     await sock.groupAcceptInvite(textToGroupLink(quoted).split(".com/")[1]);
   }else{
