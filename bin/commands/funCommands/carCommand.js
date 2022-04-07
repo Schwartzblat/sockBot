@@ -35,6 +35,9 @@ const procCommand = async (message, sock) => {
     return;
   }
   const data = response.data.result.records[0];
+  if(!data){
+    return;
+  }
   let output = 'מספר רכב: '+formatCarId(String(data['mispar_rechev']))+'\n';
   output += 'תוצרת רכב: '+data['tozeret_nm']+'\n';
   output += 'דגם: '+data['kinuy_mishari']+'\n';

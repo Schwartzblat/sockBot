@@ -22,16 +22,31 @@ const isGroupAdmin = (participant, chat) => {
 };
 
 /**
+ *
+ * @param {string} phone
+ * @param {makeInMemoryStore} store
+ */
+const findCommonGroups = async(phone, store)=>{
+  const commonGroups = [];
+  for(const [id, groupInfo] of Object.entries(store.groupMetadata)) {
+    if (groupInfo.participants.find(par => par.id.split("@")[0]===phone)) {
+      commonGroups.push(id);
+    }
+  }
+  return commonGroups;
+}
+/**
  * add phone to blacklist.
  *
  * @param {proto.IWebMessageInfo} message
  * @param {makeWASocket} sock
+ * @param {makeInMemoryStore} store
  * @return {Promise<void>}
  */
-const procCommand = async (message, sock) => {
+const procCommand = async (message, sock, store) => {
   const chat =  await sock.groupMetadata(message.key.remoteJid);
   const isGroup = message.key.remoteJid.endsWith("@g.us");
-  if (!isGroup || !(isGroupAdmin(message.key.participant, chat) || isPrivileged(message))){
+  if (!isGroup){
     return;
   }
   const mentions = message.message.extendedTextMessage.contextInfo.mentionedJid;
@@ -41,7 +56,23 @@ const procCommand = async (message, sock) => {
   }else{
     phone = parsePhone(removeFirstWord(message.body));
   }
-
+  if(removeFirstWord(message.body).split(" ")[0] === "הכל" && isPrivileged(message)){
+    const jids = await findCommonGroups(phone, store);
+    let errorCounter = 0;
+    for (const jid of jids){
+      try {
+        if (!isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", store.groupMetadata[jid])){
+          errorCounter++;
+          continue;
+        }
+        await sock.groupParticipantsUpdate(jid, [phone + "@s.whatsapp.net"], "remove");
+      }catch(e){
+        errorCounter++;
+      }
+    }
+    await sock.sendMessage(message.key.remoteJid, {text:"המספר "+phone+"הוסר בהצלחה ב"+(jids.length-errorCounter)+"/"+jids.length+" קבוצות"}, {quoted: message});
+    return;
+  }
   if(isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", chat)){
     try {
       await sock.groupParticipantsUpdate(message.key.remoteJid, [phone+"@s.whatsapp.net"], "remove");

@@ -7,7 +7,6 @@ const axios = require('axios').default;
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-    // Request part.
     const options = {
         method: 'GET',
         url: 'https://fortune-telling.online/random-advice-online/'
