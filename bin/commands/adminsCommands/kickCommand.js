@@ -49,9 +49,9 @@ const procCommand = async (message, sock, store) => {
   if (!isGroup){
     return;
   }
-  const mentions = message.message.extendedTextMessage.contextInfo.mentionedJid;
+  const mentions = message.message?.extendedTextMessage?.contextInfo?.mentionedJid;
   let phone;
-  if (mentions.length>0) {
+  if (mentions && mentions.length>0) {
     phone = mentions[0].split("@")[0];
   }else{
     phone = parsePhone(removeFirstWord(message.body));
@@ -70,7 +70,7 @@ const procCommand = async (message, sock, store) => {
         errorCounter++;
       }
     }
-    await sock.sendMessage(message.key.remoteJid, {text:"המספר "+phone+"הוסר בהצלחה ב"+(jids.length-errorCounter)+"/"+jids.length+" קבוצות"}, {quoted: message});
+    await sock.sendMessage(message.key.remoteJid, {text:"המספר "+phone+" הוסר בהצלחה ב"+(jids.length-errorCounter)+"/"+jids.length+" קבוצות"}, {quoted: message});
     return;
   }
   if(isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", chat)){

@@ -25,6 +25,9 @@ const getNameByPhone = (store, phone) => {
  */
 const getLovePercentage = (name1, name2) => {
   const namesArray = [name1, name2].sort();
+  if (namesArray[1]==="972584220904" && namesArray[0]==="972528997257") {
+    return 100;
+  }
   return getRandomIntInclusive(0, 100, {seed: namesArray[1] + namesArray[0]});
 };
 
@@ -185,7 +188,9 @@ const procCommand = async (message, sock, store) => {
   if (mentions.length === 1) {
     mentions.push(message.key.participant || message.key.remoteJid);
   }
-
+  if (mentions[0] === mentions[1] || mentions[0]===message.key.participant) {
+    return;
+  }
   const loveImage = await generateLoveImage(mentions[0], mentions[1], sock, store, message.key.remoteJid);
   const loveBuffer = await loveImage.getBufferAsync(Jimp.MIME_PNG);
   const sticker = new Sticker(loveBuffer, {
