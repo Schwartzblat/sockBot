@@ -54,7 +54,11 @@ const procCommand = async (message, sock, store) => {
   if (mentions && mentions.length>0) {
     phone = mentions[0].split("@")[0];
   }else{
-    phone = parsePhone(removeFirstWord(message.body));
+    if(removeFirstWord(message.body).split(" ")[0] === "הכל"){
+      phone = parsePhone(message.body.split("הכל ")[1]);
+    }else {
+      phone = parsePhone(removeFirstWord(message.body));
+    }
   }
   if(removeFirstWord(message.body).split(" ")[0] === "הכל" && isPrivileged(message)){
     const jids = await findCommonGroups(phone, store);
@@ -73,7 +77,7 @@ const procCommand = async (message, sock, store) => {
     await sock.sendMessage(message.key.remoteJid, {text:"המספר "+phone+" הוסר בהצלחה ב"+(jids.length-errorCounter)+"/"+jids.length+" קבוצות"}, {quoted: message});
     return;
   }
-  if(isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", chat)){
+  if(isGroupAdmin(message.key.participant, chat) && isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", chat)){
     try {
       await sock.groupParticipantsUpdate(message.key.remoteJid, [phone+"@s.whatsapp.net"], "remove");
       await sock.sendMessage(message.key.remoteJid, {text: "בוצע"}, {quoted: message});
