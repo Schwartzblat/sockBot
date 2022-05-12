@@ -25,9 +25,6 @@ const getNameByPhone = (store, phone) => {
  */
 const getLovePercentage = (name1, name2) => {
   const namesArray = [name1, name2].sort();
-  if (namesArray[1]==="972584220904" && namesArray[0]==="972528997257") {
-    return 100;
-  }
   return getRandomIntInclusive(0, 100, {seed: namesArray[1] + namesArray[0]});
 };
 
