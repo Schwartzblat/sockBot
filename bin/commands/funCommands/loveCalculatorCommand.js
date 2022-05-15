@@ -178,7 +178,7 @@ const generateLoveImage = async (contact1, phone2, sock , store, chatId) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock, store) => {
-  if (message.message?.extendedTextMessage?.contextInfo?.mentionedJid===null){
+  if (!message.message?.extendedTextMessage?.contextInfo?.mentionedJid){
     return;
   }
   const mentions = message.message.extendedTextMessage.contextInfo.mentionedJid;

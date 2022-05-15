@@ -24,7 +24,6 @@ const generateAuthorization = async(message, sock)=>{
         data: payload
     };
     const response = await axios.request(options).catch(err=>{console.log(err)});
-    // Only continue if status is ok.
     if (!response || response.status !== 200) {
         return;
     }
