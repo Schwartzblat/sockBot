@@ -61,7 +61,7 @@ const procCommand = async (message, sock) => {
     try {
         titles = definitionsParts.map(item => getTextInTags(item.match(new RegExp("}'>.*?<", "g"))[0]));
     }catch(e){
-        await message.reply('*לא נמצא פירוש למילה זו*');
+        await sock.sendMessage(message.key.remoteJid, {text: '*לא נמצא פירוש למילה זו*'}, {quoted: message});
         return;
     }
     const secondTitles = definitionsParts.map(item => getSecondTitles(item));
