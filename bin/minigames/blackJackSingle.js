@@ -24,12 +24,6 @@ class BlackJackSingle extends MiniGame {
         super();
         this.sock = sock;
         this.chatId = message.key.remoteJid;
-        if(this.chatId.endsWith("@g.us")){
-            sock.sendMessage(this.chatId, {text: 'משחק זה פועל רק בפרטי'});
-            delete this;
-            this.procMessage = function(){};
-            return;
-        }
         this.deck = new Deck();
         this.deck.shuffle();
         this.startGame();
