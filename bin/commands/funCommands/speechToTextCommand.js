@@ -49,6 +49,10 @@ const procCommand = async (message, sock) => {
     return;
   }
   const media = await downloadMedia(message.message.extendedTextMessage.contextInfo.quotedMessage);
+  if (media.length >20000){
+    await sock.sendMessage(message.key.remoteJid, {text: "הקלטה זו ארוכה מדי"}, {quoted: message});
+    return;
+  }
   const mimetype = message.message.extendedTextMessage.contextInfo.quotedMessage.audioMessage.mimetype.split(";")[0].split("/")[1];
   const tempPath = await saveFileToTempPath(media, mimetype);
   const res = await execa('python', [
@@ -60,12 +64,10 @@ const procCommand = async (message, sock) => {
   // Remove temp files.
   try {
     fs.unlinkSync(tempPath);
-    fs.unlinkSync(path.resolve(__dirname, '..\\..\\pythonScripts\\temp.txt'));
-    fs.unlinkSync(tempPath.split('.')[0] + mimetype);
+    fs.unlinkSync(tempPath.split('.')[0] +"." + mimetype);
   } catch (err) {
     console.error(err);
   }
-  // Beautify output.
   if (res['failed']) {
     console.log(util.inspect(res));
     return;
