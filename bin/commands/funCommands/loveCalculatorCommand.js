@@ -136,17 +136,17 @@ const addDecoration = async (image) => {
 
 /**
  *
- * @param {string} contact1
+ * @param {string} phone1
  * @param {string} phone2
  * @param {makeWASocket} sock
  * @param {makeInMemoryStore} store
  * @param {string} chatId
  * @return {Promise<Jimp>}
  */
-const generateLoveImage = async (contact1, phone2, sock , store, chatId) => {
+const generateLoveImage = async (phone1, phone2, sock , store, chatId) => {
   const loveImage = await Jimp.read(
       './public/loveCalculator/loveBackground.png');
-  const image1 = await sock.profilePictureUrl(contact1, "image").catch(err => {
+  const image1 = await sock.profilePictureUrl(phone1, "image").catch(err => {
     return defaultImagePath;
   })
   const image2 = await sock.profilePictureUrl(phone2, "image").catch(err=>{
@@ -154,13 +154,13 @@ const generateLoveImage = async (contact1, phone2, sock , store, chatId) => {
   } )
   await drawProfilePic(loveImage, image1, false);
   await drawProfilePic(loveImage, image2, true);
-  const name1 = getNameByPhone(store, contact1);
+  const name1 = getNameByPhone(store, phone1);
   const name2 = getNameByPhone(store, phone2);
 
   await drawProfileName(loveImage, name1, false);
   await drawProfileName(loveImage, name2, true);
 
-  const lovePercentage = getLovePercentage(contact1.split("@")[0], phone2.split("@")[0]);
+  const lovePercentage = getLovePercentage(phone1.split("@")[0], phone2.split("@")[0]);
   await drawHeart(loveImage, lovePercentage);
   await drawLovePercentage(loveImage, lovePercentage);
 
