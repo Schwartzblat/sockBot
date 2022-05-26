@@ -19,12 +19,12 @@ const getNameByPhone = (store, phone) => {
 /**
  * Returns a random number between 0 and 100, uses names as seed.
  *
- * @param {string} name1
- * @param {string} name2
+ * @param {string} phone1
+ * @param {string} phone2
  * @return {number}
  */
-const getLovePercentage = (name1, name2) => {
-  const namesArray = [name1, name2].sort();
+const getLovePercentage = (phone1, phone2) => {
+  const namesArray = [phone1, phone2].sort();
   return getRandomIntInclusive(0, 100, {seed: namesArray[1] + namesArray[0]});
 };
 
