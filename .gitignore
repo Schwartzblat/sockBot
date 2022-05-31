@@ -7,3 +7,5 @@
 /config/admins.json
 /config/apiKeys.json
 /config/whoIs.json
+/.idea
+/.vscode
