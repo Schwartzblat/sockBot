@@ -6,7 +6,18 @@ const {getRandomIntInclusive} = require('../../utils/random');
 const {shadow} = require('../../utils/imageEffects');
 const {Sticker} = require('wa-sticker-formatter');
 const path = require('path');
+const {privilegedUsers} = require("../../../config/admins.json");
 const defaultImagePath = path.resolve(__dirname, '../../../public/defaultProfilePic.png');
+
+/**
+ * Checks if message has been sent by a privileged user.
+ * @param {proto.IWebMessageInfo} message
+ * @returns {*}
+ */
+const isPrivileged = (message) => {
+  return message.key.fromMe || privilegedUsers.includes(message.key.participant || message.key.remoteJid);
+};
+
 /**
  *
  * @param {makeInMemoryStore} store
@@ -140,10 +151,10 @@ const addDecoration = async (image) => {
  * @param {string} phone2
  * @param {makeWASocket} sock
  * @param {makeInMemoryStore} store
- * @param {string} chatId
+ * @param {number} lovePercentage
  * @return {Promise<Jimp>}
  */
-const generateLoveImage = async (phone1, phone2, sock , store, chatId) => {
+const generateLoveImage = async (phone1, phone2, sock , store, lovePercentage=undefined) => {
   const loveImage = await Jimp.read(
       './public/loveCalculator/loveBackground.png');
   const image1 = await sock.profilePictureUrl(phone1, "image").catch(err => {
@@ -160,7 +171,10 @@ const generateLoveImage = async (phone1, phone2, sock , store, chatId) => {
   await drawProfileName(loveImage, name1, false);
   await drawProfileName(loveImage, name2, true);
 
-  const lovePercentage = getLovePercentage(phone1.split("@")[0], phone2.split("@")[0]);
+  if (!lovePercentage) {
+    lovePercentage = getLovePercentage(phone1.split("@")[0], phone2.split("@")[0]);
+  }
+
   await drawHeart(loveImage, lovePercentage);
   await drawLovePercentage(loveImage, lovePercentage);
 
@@ -188,7 +202,16 @@ const procCommand = async (message, sock, store) => {
   if (mentions[0] === mentions[1] || mentions[0]===message.key.participant) {
     return;
   }
-  const loveImage = await generateLoveImage(mentions[0], mentions[1], sock, store, message.key.remoteJid);
+
+  let lovePercentage = undefined;
+  if (isPrivileged(message)) {
+    const messageParts = message.body.split(" ");
+    if (messageParts.length > 1 && !isNaN(messageParts[messageParts.length - 1])) {
+        lovePercentage = parseInt(messageParts[messageParts.length - 1]);
+    }
+  }
+
+  const loveImage = await generateLoveImage(mentions[0], mentions[1], sock, store, lovePercentage);
   const loveBuffer = await loveImage.getBufferAsync(Jimp.MIME_PNG);
   const sticker = new Sticker(loveBuffer, {
     pack: "pack",
