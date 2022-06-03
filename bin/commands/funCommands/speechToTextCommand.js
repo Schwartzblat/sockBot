@@ -49,7 +49,7 @@ const procCommand = async (message, sock) => {
     return;
   }
   const media = await downloadMedia(message.message.extendedTextMessage.contextInfo.quotedMessage);
-  if (media.length >20000){
+  if (media.length >20*1000000){
     await sock.sendMessage(message.key.remoteJid, {text: "הקלטה זו ארוכה מדי"}, {quoted: message});
     return;
   }
