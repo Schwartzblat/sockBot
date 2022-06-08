@@ -7,6 +7,7 @@ const {shadow} = require('../../utils/imageEffects');
 const {Sticker} = require('wa-sticker-formatter');
 const path = require('path');
 const {privilegedUsers} = require("../../../config/admins.json");
+const {clamp} = require("../../utils/mathUtils");
 const defaultImagePath = path.resolve(__dirname, '../../../public/defaultProfilePic.png');
 
 /**
@@ -119,6 +120,9 @@ const drawLovePercentage = async (image, percentage) => {
 };
 
 const drawHeart = async (image, filledPercentage) => {
+  // Cap filledPercentage at (0,100) boundaries.
+  filledPercentage = clamp(filledPercentage, 0, 100);
+
   const heartEmpty = await Jimp.read('./public/loveCalculator/heartEmpty.png');
   await heartEmpty.resize(230, 230);
   const heartFilled = await Jimp.read(
