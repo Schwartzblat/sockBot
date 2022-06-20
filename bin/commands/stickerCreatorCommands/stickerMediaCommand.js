@@ -9,7 +9,6 @@ const getSticker = async (message)=>{
     case "imageMessage":
       return await imageToSticker(message, undefined);
     case "videoMessage":
-      return;
       return await videoToSticker(message, undefined);
     case "extendedTextMessage":
       return await getSticker(message?.extendedTextMessage?.contextInfo?.quotedMessage);

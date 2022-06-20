@@ -29,23 +29,74 @@ const dataURIToSticker = async (dataURI, pack="botPack", author="boti") => {
         type: StickerTypes.FULL
     });
 }
+
 const videoToSticker = async (message, pack="botPack", author="boti") => {
     if (message.videoMessage.gifPlayback){
         return;
     }
-    // const stream = await decryptMediaMessageBuffer(message);
-    // if (!stream){
-    //     return;
-    // }
-    const buffer = await downloadMedia(message);
+
+    const buffer = await formatVideoToWebp(message);
 
     return new Sticker(buffer, {
         pack: pack,
         author: author,
         type: StickerTypes.FULL,
-        quality: 100
+        quality: 10
     });
 }
+
+/**
+ *
+ * @param {IMessage} message
+ * @return {Promise<Buffer>}
+ */
+const formatVideoToWebp = async (message) => {
+    const tempFile = path.join(
+        tmpdir(),
+        `${Crypto.randomBytes(6).readUIntLE(0, 6).toString(36)}.webp`
+    );
+
+    const stream = new (require('stream').Readable)();
+    const buffer = await downloadMedia(message);
+    stream.push(buffer);
+    stream.push(null);
+
+    const videoType = message.videoMessage.mimetype.split("/")[1];
+
+    await new Promise((resolve, reject) => {
+        ffmpeg(stream)
+            .inputFormat(videoType)
+            .on('error', reject)
+            .on('end', () => resolve(true))
+            .addOutputOptions([
+                '-vcodec',
+                'libwebp',
+                '-vf',
+                // eslint-disable-next-line no-useless-escape
+                'scale=\'iw*min(300/iw\,300/ih)\':\'ih*min(300/iw\,300/ih)\',format=rgba,pad=300:300:\'(300-iw)/2\':\'(300-ih)/2\':\'#00000000\',setsar=1,fps=10',
+                '-loop',
+                '0',
+                '-ss',
+                '00:00:00.0',
+                '-t',
+                '00:00:05.0',
+                '-preset',
+                'default',
+                '-an',
+                '-vsync',
+                '0',
+                '-s',
+                '512:512',
+            ])
+            .toFormat('webp')
+            .save(tempFile);
+    });
+
+    const data = fs.readFileSync(tempFile);
+    fs.unlinkSync(tempFile);
+    return data;
+}
+
 /**
  * @param {proto.IMessage} message
  * @returns {Promise<Buffer>}
