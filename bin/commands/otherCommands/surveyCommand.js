@@ -23,11 +23,14 @@ const parseCommand = (command)=>{
 const surveyCommand = async (message, sock) => {
     const command = removeFirstWord(message.body);
     const parsed = parseCommand(command);
-    if (parsed.includes(' ')){
+    if (parsed.includes(' ')||!parsed[0]){
         return;
     }
     let optionsObjects = [];
     for (let i=1;i<parsed.length;i++){
+        if (!parsed[i]){
+            return;
+        }
         optionsObjects.push({buttonId: "id"+i, buttonText: {"displayText": parsed[i]}, type: 1});
     }
     let buttonMessage;
@@ -101,8 +104,7 @@ const surveyResults = async (message, sock, store)=>{
     for(let i=0;i<buttonsText.length;i++){
         output += buttonsText[i]+": "+counter.get(buttonsId[i])+'\n';
     }
-    console.log(quoted);
-    console.log(await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: quoted}));
+    await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: quoted});
 }
 
 module.exports = {surveyCommand,surveyResults};
