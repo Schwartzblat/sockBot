@@ -1,8 +1,8 @@
 const axios = require('axios').default;
 const fs = require('fs');
 const path = require('path');
-let config = require('..\\..\\..\\config\\whoIs.json');
-const {removeFirstWord, parsePhone} = require('..\\..\\utils\\stringUtils');
+let config = require('../../../config/whoIs.json');
+const {removeFirstWord, parsePhone} = require('../../utils/stringUtils');
 let headers = {
     'Authorization': config.auth
 };

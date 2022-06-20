@@ -6,7 +6,7 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const messages = {
     'start': 'ברוכים הבאים למשחק בלקג\'ק!\nכדי להצטרף  למשחק כתבו "אני".\nיש לכם 20 שניות להצטרף למשחק והמשחק מוגבל לארבעה משתתפים בלבד.'
 }
-class blackjackGroup extends MiniGame{
+class blackJackGroup extends MiniGame{
     /**
      *
      * @param {proto.IWebMessageInfo} message
@@ -93,6 +93,6 @@ class blackjackGroup extends MiniGame{
 
 }
 
-module.exports = blackjackGroup;
+module.exports = blackJackGroup;
 
 
