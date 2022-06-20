@@ -7,7 +7,6 @@ const {shadow} = require('../../utils/imageEffects');
 const {Sticker} = require('wa-sticker-formatter');
 const path = require('path');
 const {privilegedUsers} = require("../../../config/admins.json");
-const {clamp} = require("../../utils/mathUtils");
 const defaultImagePath = path.resolve(__dirname, '../../../public/defaultProfilePic.png');
 
 /**
@@ -111,35 +110,46 @@ const drawLovePercentage = async (image, percentage) => {
   const text = percentage.toString() + '%';
   const textWidth = Jimp.measureText(font, text);
   const textHeight = Jimp.measureTextHeight(font, text, 260);
-  await image.print(
+  const fontBuffer = new Jimp(image.getWidth(), image.getHeight());
+  await fontBuffer.print(
       font,
       (image.getWidth() - textWidth) / 2 + 4,
       (image.getHeight() - textHeight) / 2 - 10,
       text,
   );
+  await shadow(fontBuffer, 0, 0, {opacity: 0.2, size: 1, blur: 10, x: 0, y: 0});
+  await image.composite(fontBuffer, 0, 0);
 };
 
 const drawHeart = async (image, filledPercentage) => {
-  // Cap filledPercentage at (0,100) boundaries.
-  filledPercentage = clamp(filledPercentage, 0, 100);
+ if (filledPercentage >= 0) {
+   filledPercentage = Math.min(filledPercentage, 100);
+   const heartEmpty = await Jimp.read('./public/loveCalculator/heartEmpty.png');
+   await heartEmpty.resize(230, 230);
+   const heartFilled = await Jimp.read(
+       './public/loveCalculator/heartFilled.png');
+   await heartFilled.resize(230, 230);
 
-  const heartEmpty = await Jimp.read('./public/loveCalculator/heartEmpty.png');
-  await heartEmpty.resize(230, 230);
-  const heartFilled = await Jimp.read(
-      './public/loveCalculator/heartFilled.png');
-  await heartFilled.resize(230, 230);
+   const heightBar = heartEmpty.getHeight() * (100 - filledPercentage) / 100;
+   await heartFilled.crop(0, heightBar, heartFilled.getWidth(),
+       heartFilled.getHeight() - heightBar);
+   const heartComp = await heartEmpty.composite(heartFilled, 0, heightBar);
 
-  const heightBar = heartEmpty.getHeight() * (100 - filledPercentage) / 100;
-  await heartFilled.crop(0, heightBar, heartFilled.getWidth(),
-      heartFilled.getHeight() - heightBar);
-  const heartComp = await heartEmpty.composite(heartFilled, 0, heightBar);
+   const heartRender = await shadow(heartComp, 40, 40,
+       {opacity: 0.3, size: 1, blur: 10, x: 0, y: 0});
 
-  const heartRender = await shadow(heartComp, 40, 40,
-      {opacity: 0.3, size: 1, blur: 10, x: 0, y: 0});
-
-  const x = (image.getWidth() - heartRender.getWidth()) / 2;
-  const y = (image.getHeight() - heartRender.getHeight()) / 2;
-  await image.composite(heartRender, x, y);
+   const x = (image.getWidth() - heartRender.getWidth()) / 2;
+   const y = (image.getHeight() - heartRender.getHeight()) / 2;
+   await image.composite(heartRender, x, y);
+ } else {
+    const heartBroken = await Jimp.read("./public/loveCalculator/heartBroken.png");
+    await heartBroken.resize(250, 230);
+    const heartRender = await shadow(heartBroken, 40, 40,
+        {opacity: 0.3, size: 1, blur: 10, x: 0, y: 0});
+    const x = (image.getWidth() - heartRender.getWidth()) / 2;
+    const y = (image.getHeight() - heartRender.getHeight()) / 2;
+    await image.composite(heartRender, x, y);
+ }
 };
 
 const addDecoration = async (image) => {
