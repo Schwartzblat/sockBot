@@ -35,7 +35,9 @@ const videoToSticker = async (message, pack="botPack", author="boti") => {
         return;
     }
 
-    const buffer = await formatVideoToWebp(message);
+    const videoBuffer = await downloadMedia(message);
+    const videoType = message.videoMessage.mimetype.split("/")[1];
+    const buffer = await formatVideoToWebp(videoBuffer, videoType);
 
     return new Sticker(buffer, {
         pack: pack,
@@ -46,22 +48,21 @@ const videoToSticker = async (message, pack="botPack", author="boti") => {
 }
 
 /**
+ * Formats a video to webp.
  *
- * @param {IMessage} message
- * @return {Promise<Buffer>}
+ * @param {Buffer} videoBuffer - the video you want to format in buffer format.
+ * @param {string} videoType - the type(format) of the video.
+ * @return {Promise<Buffer>} - the formatted video in buffer format.
  */
-const formatVideoToWebp = async (message) => {
+const formatVideoToWebp = async (videoBuffer, videoType) => {
     const tempFile = path.join(
         tmpdir(),
         `${Crypto.randomBytes(6).readUIntLE(0, 6).toString(36)}.webp`
     );
 
     const stream = new (require('stream').Readable)();
-    const buffer = await downloadMedia(message);
-    stream.push(buffer);
+    stream.push(videoBuffer);
     stream.push(null);
-
-    const videoType = message.videoMessage.mimetype.split("/")[1];
 
     await new Promise((resolve, reject) => {
         ffmpeg(stream)
