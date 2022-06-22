@@ -1,4 +1,5 @@
 const seedRandom = require('seedrandom');
+const {v4: uuidv4} = require('uuid');
 
 /**
  * @typedef RandomProperties
@@ -77,9 +78,22 @@ const getRandomDistributed = (obj, props = {}) => {
   return randomFromArr(weightedArray, props);
 };
 
+/**
+ * Returns a randomly generated uuid.
+ *
+ * @return {string} uuid
+ */
+const genUUID = () => {
+  // We are using UUIDv4, which means that low entropy can be a problem.
+  // You may want to use UUIDv5 instead, which uses namespaces to prevent
+  // low entropy.
+  return uuidv4();
+};
+
 module.exports = {
   getRandomIntInclusive,
   getRandomInt,
   randomFromArr,
+  genUUID,
   getRandomDistributed,
 };
