@@ -76,7 +76,7 @@ It was written in mind of the users and participants of the group and tries to c
 Clone this project
 
 ```bash
-> git clone https://github.com/PillowTweezers/pt_bot_open.git
+> git clone https://github.com/Schwartzblat/sockBot.git
 > cd pt_bot
 ```
 

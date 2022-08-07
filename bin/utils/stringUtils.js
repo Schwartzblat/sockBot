@@ -72,8 +72,13 @@ const removeFirstWord = (str) => {
  * @return {*}
  */
 const parsePhone = (phone)=>{
-  phone = phone.replaceAll(" ", "").replaceAll("-", "").replaceAll("+", "").replaceAll("⁩", "").replaceAll("⁦", "");
-  return phone.startsWith('0') ? '972'+phone.substr(1) : phone;
+  let outputPhone = '';
+  for(let i=0;i<phone.length;i++){
+    if(['0','1','2','3','4','5','6','7','8','9'].includes(phone[i])){
+      outputPhone +=  phone[i];
+    }
+  }
+  return outputPhone.startsWith('0') ? '972'+outputPhone.substring(1) : outputPhone;
 }
 
 const removeEmojis = (str) => {
