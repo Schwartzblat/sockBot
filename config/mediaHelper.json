@@ -1,0 +1,14 @@
+{
+  "image": {
+    "lossless": true,
+    "quality": "100",
+    "effort": "6"
+  },
+  "video": {
+    "lossless": false,
+    "quality": "60",
+    "effort": "6",
+    "maxDuration": "00:00:05.0",
+    "maxSize": "1MB"
+  }
+}

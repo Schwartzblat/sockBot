@@ -84,9 +84,7 @@ const getRandomDistributed = (obj, props = {}) => {
  * @return {string} uuid
  */
 const genUUID = () => {
-  // We are using UUIDv4, which means that low entropy can be a problem.
-  // You may want to use UUIDv5 instead, which uses namespaces to prevent
-  // low entropy.
+  // Maybe use uuidv5 instead?
   return uuidv4();
 };
 

@@ -9,12 +9,104 @@ const ffmpeg = require('fluent-ffmpeg');
 const dataUri = require('datauri');
 const {Sticker, StickerTypes} = require('wa-sticker-formatter');
 const {genUUID} = require('./random.js');
+const sharp = require('sharp');
+const Settings = require('../../config/mediaHelper.json');
 
 let dataURIToBuffer;
 const load = async () => {
   dataURIToBuffer = (await import('data-uri-to-buffer')).dataUriToBuffer;
 };
 load();
+
+/**
+ * Notice, this piece of code
+ */
+
+/**
+ * Sticker metadata.
+ * @typedef {Object} StickerMetadata
+ * @property {string} [name]
+ * @property {string} [author]
+ * @property {string[]} [categories]
+ */
+
+/**
+ * Formats webp to a sticker.
+ * @param {buffer} data - sticker in webp format.
+ * @param {StickerMetadata} metadata - the metadata of the sticker.
+ *
+ * @returns {Promise<Buffer>} buffer containing the sticker and ready to be
+ * sent.
+ */
+const formatWebpSticker = async (data, metadata) => {
+  if (metadata.name || metadata.author) {
+    const img = new webp.Image();
+    const hash = this.generateHash(32);
+    const stickerPackId = hash;
+    const packname = metadata.name;
+    const author = metadata.author;
+    const categories = metadata.categories || [''];
+    const json = {
+      'sticker-pack-id': stickerPackId,
+      'sticker-pack-name': packname,
+      'sticker-pack-publisher': author,
+      'emojis': categories,
+    };
+    let exifAttr = Buffer.from([
+      0x49,
+      0x49,
+      0x2A,
+      0x00,
+      0x08,
+      0x00,
+      0x00,
+      0x00,
+      0x01,
+      0x00,
+      0x41,
+      0x57,
+      0x07,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x16,
+      0x00,
+      0x00,
+      0x00]);
+    let jsonBuffer = Buffer.from(JSON.stringify(json), 'utf8');
+    let exif = Buffer.concat([exifAttr, jsonBuffer]);
+    exif.writeUIntLE(jsonBuffer.length, 14, 4);
+    await img.load(Buffer.from(webpMedia.data, 'base64'));
+    img.exif = exif;
+    webpMedia.data = (await img.save(null)).toString('base64');
+  }
+
+  return webpMedia;
+};
+
+const formatImageToWebp = async (data) => {
+  const img = sharp(data).webp({
+    quality: Settings.image.quality,
+    lossless: Settings.image.lossless,
+    effort: Settings.image.effort,
+  });
+
+  img.resize(512, 512, {
+    fit: sharp.fit.contain,
+    background: {r: 0, g: 0, b: 0, a: 0},
+  });
+
+  return img.toBuffer();
+};
+
+const formatVideoToWebp = async (data, type) => {
+  const steam = new (require('stream').Readable)();
+  steam.push(data);
+  steam.push(null);
+  return await _webpProcessor(steam, type);
+};
 
 /**
  * Creates a sticker out of a message containing a photo.
@@ -92,6 +184,7 @@ const filePathToWebp = async (filePath, fileType = '', inputOptions = []) => {
   if (fileType && !inputOptions.includes('-f')) {
     inputOptions.push('-f', fileType);
   }
+
   return await _webpProcessor(filePath, inputOptions);
 };
 
@@ -119,15 +212,17 @@ const videoBufferToWebp = async (videoBuffer, videoType, inputOptions = []) => {
 
 /**
  * Formats a file/stream to webp sticker format.
+ * DISCLAIMER: YOU ARE RESPONSIBLE FOR USING A VALID BITRATE, PASS IT VIA THE
+ * INPUT OPTIONS WITH THE KEY '-b:v'.
  *
  * This method unlinks temp files after it is done.
  *
  * @param {string|stream.internal.Readable} video - the video you want to format.
- * @param {string[]} [inputOptions] - the options you want to pass to ffmpeg.
+ * @param {string[]} inputOptions - the options you want to pass to ffmpeg.
  * @return {Promise<Buffer>}
  * @private
  */
-const _webpProcessor = async (video, inputOptions = []) => {
+const _webpProcessor = async (video, inputOptions) => {
   const tempFile = path.join(
       tmpdir(),
       `${genUUID()}.webp`,
@@ -156,14 +251,23 @@ const _webpProcessor = async (video, inputOptions = []) => {
       '-ss',
       '00:00:00.0',
       '-t',
-      '00:00:05.0',
+      Settings.video.maxDuration,
       '-preset',
       'default',
       '-an',
+      // FIXME: This is deprecated, change to modern string method.
       '-vsync',
       '0',
       '-s',
       '512:512',
+      '-compression_level',
+      Settings.video.effort,
+      '-lossless',
+      Settings.video.lossless.toString(),
+      '-qscale',
+      Settings.video.quality,
+      '-fs',
+      Settings.video.maxSize,
     ]);
     ffmpegWorker.toFormat('webp');
     ffmpegWorker.save(tempFile);
@@ -184,7 +288,7 @@ const _webpProcessor = async (video, inputOptions = []) => {
  * @return {Promise<Sticker>}
  */
 const framesToSticker = async (
-    framesPath, inputOptions=[], pack = 'botPack', author = 'boti') => {
+    framesPath, inputOptions = [], pack = 'botPack', author = 'boti') => {
   const videoBuffer = await filePathToWebp(framesPath, undefined, inputOptions);
   return new Sticker(videoBuffer, {
     pack: pack,
