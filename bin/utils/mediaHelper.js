@@ -3,10 +3,8 @@ const {getContentType, downloadContentFromMessage} = require(
 const path = require('path');
 const axios = require('axios');
 const {tmpdir} = require('os');
-const Crypto = require('crypto');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
-const dataUri = require('datauri');
 const {Exif, Metadata} = require('wa-sticker-formatter');
 const {genUUID} = require('./random.js');
 const sharp = require('sharp');
@@ -174,11 +172,6 @@ const imageMessageToSticker = async (
  */
 const videoMessageToSticker = async (
     message, metadata = Settings.defaultMetadata) => {
-  // TODO: No reason to deny gifs.
-  if (message.videoMessage.gifPlayback) {
-    return null;
-  }
-
   const videoBuffer = await downloadMedia(message);
   const videoType = message.videoMessage.mimetype.split('/')[1];
   const pVideo = await formatVideoToWebp(videoBuffer, videoType);
@@ -254,47 +247,6 @@ const downloadMedia = async (message) => {
     buffer = Buffer.concat([buffer, chunk]);
   }
   return buffer;
-};
-
-/**
- * FIXME: Rewrite this function.
- */
-/**
- * The functions transforms gifs to mp4. Because of the limitations of ffmpeg,
- * both the input and the output are files.
- *
- * @param {string} gifDataUri - the gif you want to convert in dataUri format.
- * @return {Promise<string>}
- */
-const gifToMp4 = async (gifDataUri) => {
-  const tempInputFile = path.join(tmpdir(),
-      `processing.
-      ${Crypto.randomBytes(6).readUIntLE(0, 6).toString(36)}
-      .gif`);
-  const tempOutputFile = path.join(tmpdir(),
-      `processing.
-      ${Crypto.randomBytes(6).readUIntLE(0, 6).toString(36)}
-      .mp4`);
-  fs.writeFileSync(tempInputFile, dataUriToBuffer(gifDataUri));
-  await new Promise((resolve, reject) => {
-    ffmpeg(tempInputFile).inputFormat('gif').outputOptions([
-      '-movflags faststart',
-      '-pix_fmt yuv420p',
-    ]).videoFilter([
-      {
-        filter: 'scale',
-        options: 'trunc(iw/2)*2:trunc(ih/2)*2',
-      },
-    ]).toFormat('mp4').on('error', function(err) {
-      reject(err);
-    }).on('end', function() {
-      resolve(true);
-    }).save(tempOutputFile);
-  });
-  const outputDataUri = await dataUri(tempOutputFile);
-  fs.unlinkSync(tempOutputFile);
-  fs.unlinkSync(tempInputFile);
-  return outputDataUri;
 };
 
 /**
