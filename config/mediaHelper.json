@@ -1,14 +1,19 @@
 {
   "image": {
     "lossless": true,
-    "quality": "100",
-    "effort": "6"
+    "quality": 100,
+    "effort": 6
   },
   "video": {
-    "lossless": false,
-    "quality": "60",
-    "effort": "6",
-    "maxDuration": "00:00:05.0",
-    "maxSize": "1MB"
+    "lossless": 0,
+    "quality": 32,
+    "effort": 6,
+    "maxDuration": 7.0,
+    "fps": 14,
+    "maxSize": "750KB"
+  },
+  "defaultMetadata": {
+    "pack": "botPack",
+    "author": "boti"
   }
 }

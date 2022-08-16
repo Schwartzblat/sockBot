@@ -29,7 +29,7 @@ const procCommand = async (message, sock) => {
   if (!sticker){
     return;
   }
-  await sock.sendMessage(message.key.remoteJid, {sticker: await sticker.toBuffer()}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {sticker: await sticker}, {quoted: message});
 };
 
 module.exports = procCommand;

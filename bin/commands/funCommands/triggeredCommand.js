@@ -3,7 +3,7 @@ const path = require('path');
 const {tmpdir} = require('os');
 const fs = require('fs');
 const {getRandomIntInclusive, genUUID} = require('../../utils/random');
-const {framesToSticker} = require('../../utils/mediaHelper');
+const {filePathToSticker} = require('../../utils/mediaHelper');
 const {getContentType} = require('@adiwajshing/baileys');
 
 const defaultImagePath = path.resolve(__dirname,
@@ -69,7 +69,7 @@ const createFrames = async (image) => {
  *
  * @param {string} phone - the jid of the user.
  * @param sock - the socket of the bot.
- * @return {Promise<Sticker>} - the triggered sticker.
+ * @return {Promise<Buffer>} - the triggered sticker.
  */
 const generateTriggeredSticker = async (phone, sock) => {
   const profilePicUrl = await sock.profilePictureUrl(phone, 'image').
@@ -80,7 +80,13 @@ const generateTriggeredSticker = async (phone, sock) => {
   fry(profilePic);
   await drawTriggeredBanner(profilePic);
   const framesPath = await createFrames(profilePic);
-  const sticker = await framesToSticker(framesPath, ['-stream_loop', '3']);
+  const ffmpegOptions = {
+    input: [
+      '-stream_loop', '3',
+      '-f', 'image2',
+    ],
+  };
+  const sticker = await filePathToSticker(framesPath, ffmpegOptions);
   fs.rmSync(path.dirname(framesPath), {recursive: true});
   return sticker;
 };
@@ -120,11 +126,10 @@ const procCommand = async (message, sock) => {
     return;
   }
   const triggeredSticker = await generateTriggeredSticker(phone, sock);
-  const stickerBuffer = await triggeredSticker.toBuffer();
   const messageOptions = {
     quoted: quotedMessage ? quotedMessage : message,
   };
-  await sock.sendMessage(message.key.remoteJid, {sticker: stickerBuffer},
+  await sock.sendMessage(message.key.remoteJid, {sticker: triggeredSticker},
       messageOptions);
 };
 
