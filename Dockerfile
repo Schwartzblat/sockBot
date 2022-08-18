@@ -5,9 +5,11 @@ FROM debian:bookworm
 WORKDIR /app
 
 # Install binaries
-RUN apt update
-RUN apt install -y nodejs npm
-RUN apt install -y ffmpeg
+RUN apt-get update && apt-get install -y \
+    nodejs \
+    npm \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
 
 
 # Install dependencies
