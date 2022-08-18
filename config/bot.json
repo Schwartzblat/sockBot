@@ -1,3 +1,4 @@
 {
-  "store_path": "../session"
+  "store_path": "../session",
+  "env": "production"
 }
