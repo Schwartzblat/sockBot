@@ -63,4 +63,5 @@ const procCommand = async (message, sock) => {
         {quoted: message});
   }
 };
+
 module.exports = procCommand;

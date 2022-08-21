@@ -20,4 +20,5 @@ const procCommand = async (message, sock) => {
     await sock.sendMessage(message.key.remoteJid, {delete: key});
   }
 };
+
 module.exports = procCommand;

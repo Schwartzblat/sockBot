@@ -38,4 +38,5 @@ const procCommand = async (message, sock) => {
   };
   await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: msg});
 };
+
 module.exports = procCommand;

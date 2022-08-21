@@ -26,4 +26,5 @@ const procCommand = async (message, sock) => {
   };
   await sock.sendMessage(message.key.remoteJid, reactionMessage);
 };
+
 module.exports = procCommand;
