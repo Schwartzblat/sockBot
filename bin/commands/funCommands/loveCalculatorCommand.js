@@ -29,6 +29,7 @@ const isPrivileged = (message) => {
 const getNameByPhone = (store, phone) => {
   return store.contacts[phone] || phone.split('@')[0];
 };
+
 /**
  * Returns a random number between 0 and 100, uses names as seed.
  *

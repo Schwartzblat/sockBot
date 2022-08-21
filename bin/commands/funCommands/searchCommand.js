@@ -2,6 +2,7 @@ const {removeFirstWord} = require('../../utils/stringUtils');
 const {generateWAMessageFromContent, proto, generateMessageID} = require(
     '@adiwajshing/baileys');
 const base = 'https://googlethatforyou.com';
+
 /**
  * @param {proto.IWebMessageInfo} message
  * @param {makeWASocket} sock

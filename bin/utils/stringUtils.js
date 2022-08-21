@@ -90,6 +90,7 @@ const removeEmojis = (str) => {
 const replaceAll = (str, find, replace) => {
   return str.replace(new RegExp(find, 'g'), replace);
 };
+
 /**
  *
  * @param {string} text
@@ -129,6 +130,7 @@ const isAskToAsk = (text) => {
   }
   return false;
 };
+
 module.exports = {
   containsHe,
   reverse,

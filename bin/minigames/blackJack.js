@@ -1,5 +1,6 @@
 const BlackJackSingle = require('./blackJackSingle.js');
 const BlackJackGroup = require('./blackJackGroup.js');
+
 /**
  *
  * @param {proto.IWebMessageInfo} message

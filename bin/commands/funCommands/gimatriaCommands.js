@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const safeGroupsPath = path.resolve(__dirname,
     '../../../config/safeGroups.json');
+
 /**
  *
  * @param {proto.IWebMessageInfo} message

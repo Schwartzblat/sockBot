@@ -35,6 +35,7 @@ const findCommonGroups = async (phone, store) => {
   }
   return commonGroups;
 };
+
 /**
  * add phone to blacklist.
  *

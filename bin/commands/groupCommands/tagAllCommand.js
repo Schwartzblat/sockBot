@@ -1,5 +1,6 @@
 const {getContentType} = require('@adiwajshing/baileys');
 const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
+
 /**
  *
  * @param {proto.IWebMessageInfo} message

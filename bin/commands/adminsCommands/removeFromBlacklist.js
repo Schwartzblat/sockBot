@@ -7,6 +7,7 @@ const isAdmin = (message) => {
   return message.key.fromMe || privilegedUsers.includes(
       message.key.participant || message.key.remoteJid);
 };
+
 /**
  * Add phone to blacklist.
  *

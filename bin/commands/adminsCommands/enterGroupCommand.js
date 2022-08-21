@@ -63,6 +63,7 @@ const joinToGroupByInvite = async (sock, code, expiration, admin, groupJid) => {
     console.log('Unable to join group', err);
   }
 };
+
 /**
  * add phone to blacklist.
  *

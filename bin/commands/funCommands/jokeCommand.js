@@ -9,6 +9,7 @@ const categories = [
   'Pun',
   'Spooky',
   'Christmas'];
+
 /**
  * @param {proto.IWebMessageInfo} message
  * @param {makeWASocket} sock

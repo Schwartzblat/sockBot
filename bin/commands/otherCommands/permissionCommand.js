@@ -1,4 +1,5 @@
 const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
+
 /**
  *
  * @param {proto.IWebMessageInfo} message

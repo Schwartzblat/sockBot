@@ -1,6 +1,7 @@
 const axios = require('axios').default;
 const {removeFirstWord} = require('../../utils/stringUtils');
 const {urlToBuffer} = require('../../utils/mediaHelper');
+
 /**
  * Process sentiment command.
  *

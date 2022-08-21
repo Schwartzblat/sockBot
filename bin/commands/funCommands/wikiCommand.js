@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const util = require('util');
 const {removeFirstWord} = require('../../utils/stringUtils');
+
 /**
  * Process speechToText command.
  *

@@ -26,6 +26,7 @@ const Values = {
   12: 'מלכה',
   13: 'מלך',
 };
+
 /**
  * Enum of card suits.
  *

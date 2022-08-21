@@ -2,6 +2,7 @@ const axios = require('axios').default;
 const {getRandomIntInclusive} = require('../../utils/random');
 
 const types = ['normal', 'funny'];
+
 /**
  *
  * @param {proto.IWebMessageInfo} message

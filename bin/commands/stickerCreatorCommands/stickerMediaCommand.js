@@ -18,6 +18,7 @@ const getSticker = async (message) => {
       return;
   }
 };
+
 /**
  * Process sticker command.
  *

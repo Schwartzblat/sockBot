@@ -13,5 +13,7 @@ const translateStringTo = async (str, lan) => {
   return await translate(str, {to: lan}).then((res) => res.text);
 };
 
-module.exports.translateString = translateString;
-module.exports.translateStringTo = translateStringTo;
+module.exports = {
+  translateString,
+  translateStringTo,
+};

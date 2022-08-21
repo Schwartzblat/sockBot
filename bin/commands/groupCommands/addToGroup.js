@@ -20,6 +20,7 @@ const isPrivileged = (message) => {
 const isGroupAdmin = (participant, chat) => {
   return chat.participants.find((par) => par.id === participant).admin !== null;
 };
+
 /**
  * @param {proto.IWebMessageInfo} message
  * @param {makeWASocket} sock
