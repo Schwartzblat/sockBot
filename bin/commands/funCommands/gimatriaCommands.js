@@ -3,17 +3,17 @@ const {removeFirstWord} = require('../../utils/stringUtils');
 const Settings = require('../../../config/gimatria.json');
 const fs = require('fs');
 const path = require('path');
-const safeGroupsPath = path.resolve(__dirname, '../../../config/safeGroups.json');
+const safeGroupsPath = path.resolve(__dirname,
+    '../../../config/safeGroups.json');
 /**
  *
  * @param {proto.IWebMessageInfo} message
  * @return {Promise<boolean>}
  */
-const isSafeGroup = async (message)=>{
+const isSafeGroup = async (message) => {
   const safeGroups = JSON.parse(await fs.readFileSync(safeGroupsPath));
   return safeGroups.includes(message.key.remoteJid);
-}
-
+};
 
 /**
  * Process gimatria command.
@@ -23,7 +23,8 @@ const isSafeGroup = async (message)=>{
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-  if(removeFirstWord(message.body).length===0 || await isSafeGroup(message)){
+  if (removeFirstWord(message.body).length === 0 ||
+      await isSafeGroup(message)) {
     return;
   }
   const requestParams = {
@@ -40,17 +41,17 @@ const procCommand = async (message, sock) => {
     return;
   }
   const data = res.data;
-  let sum, sameSum;
+  let sum; let sameSum;
   try {
-  sum = data.match(
-      new RegExp('התאמות משאילתות הגולשים לתוצאה .*', 'g'))[0].split(
-      '<')[0].split(' ')[4];
-  sameSum = data.match(
-      new RegExp('(<li>((?!([a-zA-z])).)+<\/li>)|(\\);\">(.+)<\/a>)', 'g')).
-      sort(() => Math.random() - 0.5).
-      slice(0, Settings.numberOfEquivalents).
-      map((item) => item.split('>')[1].split('<')[0].trim());
-    }catch(er){
+    sum = data.match(
+        new RegExp('התאמות משאילתות הגולשים לתוצאה .*', 'g'))[0].split(
+        '<')[0].split(' ')[4];
+    sameSum = data.match(
+        new RegExp('(<li>((?!([a-zA-z])).)+<\/li>)|(\\);\">(.+)<\/a>)', 'g')).
+        sort(() => Math.random() - 0.5).
+        slice(0, Settings.numberOfEquivalents).
+        map((item) => item.split('>')[1].split('<')[0].trim());
+  } catch (er) {
     return;
   }
 
@@ -62,7 +63,8 @@ const procCommand = async (message, sock) => {
   for (let i = 0; i < sameSum.length; i++) {
     output += sameSum[i] + '\n';
   }
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: output},
+      {quoted: message});
 };
 
 module.exports = procCommand;

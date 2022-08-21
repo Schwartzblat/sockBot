@@ -9,11 +9,13 @@ const BlackJackGroup = require('./blackJackGroup.js');
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock, miniGames, store) => {
-    if (message.key.remoteJid.endsWith('@g.us')) {
-        miniGames.addGameChat(message.key.remoteJid, BlackJackGroup, message, sock, store);
-    } else {
-        miniGames.addGameChat(message.key.remoteJid, BlackJackSingle, message, sock);
-    }
+  if (message.key.remoteJid.endsWith('@g.us')) {
+    miniGames.addGameChat(message.key.remoteJid, BlackJackGroup, message, sock,
+        store);
+  } else {
+    miniGames.addGameChat(message.key.remoteJid, BlackJackSingle, message,
+        sock);
+  }
 };
 
 module.exports = procCommand;

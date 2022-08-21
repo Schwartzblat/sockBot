@@ -36,9 +36,9 @@ const procCommand = async (message, sock) => {
   output += '● !הגב <אימוג\'י>' + '\n';
   output += 'ו--------------------------------ו' + '\n';
   output += '*אחר*' + '\n';
-  output += '● !קוד- לקבלת הקוד לבוט'+'\n';
-  output += '● !סקר "שאלה" "אופציה א" "אופציה ב"'+'\n';
-  output += '● !חשב <ביטוי>'+'\n';
+  output += '● !קוד- לקבלת הקוד לבוט' + '\n';
+  output += '● !סקר "שאלה" "אופציה א" "אופציה ב"' + '\n';
+  output += '● !חשב <ביטוי>' + '\n';
   output += '● !מיזה <טלפון>' + '\n';
   output += '● !אוטו <מספר רישוי>' + '\n';
   output += '● !ויקי <ערך>' + '\n';
@@ -64,16 +64,17 @@ const procCommand = async (message, sock) => {
   output += '*פקודות מנהלי קבוצות*' + '\n';
   output += '● !צרף <מספר>' + '\n';
   output += '● !הסר <מספר>' + '\n';
-  output += '● !תייג- מתייג את כל הקבוצה'+'\n';
+  output += '● !תייג- מתייג את כל הקבוצה' + '\n';
   output += 'ו--------------------------------ו' + '\n';
   output += '*פקודות אדמינים של הבוט*' + '\n';
   output += '● !הסר <מספר>' + '\n';
   output += '● !תגיד <טקסט>' + '\n';
-  output += '● !כנס- מכניס את הבוט לקישור/הזמנה לקבוצה'+'\n';
+  output += '● !כנס- מכניס את הבוט לקישור/הזמנה לקבוצה' + '\n';
   output += '● !חסום <מספר>' + '\n';
   output += '● !התר <מספר>' + '\n';
   output += '● !חירום- מכבה את הבוט' + '\n';
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: output},
+      {quoted: message});
 };
-//●
+// ●
 module.exports = procCommand;

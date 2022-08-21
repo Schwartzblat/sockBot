@@ -13,7 +13,7 @@ const framesCount = 10;
 /**
  * Add fry filter to the image.
  *
- * @param {Jimp} image
+ * @param {Jimp} image - the image to be processed.
  */
 const fry = (image) => {
   image.dither565();
@@ -24,7 +24,6 @@ const fry = (image) => {
     {apply: 'green', params: [0.5]},
     {apply: 'blue', params: [0.5]},
   ]);
-  return image;
 };
 
 /**
@@ -55,8 +54,8 @@ const createFrames = async (image) => {
   fs.mkdirSync(framesFolder);
   for (let i = 0; i < framesCount; i++) {
     const frame = new Jimp(image.bitmap.width, image.bitmap.height);
-    let xOffset = getRandomIntInclusive(-6, 6);
-    let yOffset = getRandomIntInclusive(-6, 6);
+    const xOffset = getRandomIntInclusive(-6, 6);
+    const yOffset = getRandomIntInclusive(-6, 6);
     frame.composite(image, xOffset, yOffset);
     await frame.writeAsync(`${framesFolder}/${i}.png`);
   }
@@ -68,7 +67,7 @@ const createFrames = async (image) => {
  *
  *
  * @param {string} phone - the jid of the user.
- * @param sock - the socket of the bot.
+ * @param {makeWASocket} sock - the socket of the bot.
  * @return {Promise<Buffer>} - the triggered sticker.
  */
 const generateTriggeredSticker = async (phone, sock) => {
@@ -95,7 +94,7 @@ const generateTriggeredSticker = async (phone, sock) => {
  * Processes the triggered command.
  *
  * @param {IWebMessageInfo} message
- * @param sock
+ * @param {makeWASocket} sock
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
@@ -120,8 +119,8 @@ const procCommand = async (message, sock) => {
     };
   }
   // Does this work?
-  phone = message.message?.extendedTextMessage?.contextInfo?.mentionedJid?.[0]
-      || phone;
+  phone = message.message?.extendedTextMessage?.contextInfo?.
+      mentionedJid?.[0] || phone;
   if (!phone) {
     return;
   }

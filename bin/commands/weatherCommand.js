@@ -19,7 +19,9 @@ const procCommand = async (message, sock) => {
   };
   // Request part.
   const res = await axios.request(requestOptions).
-      catch((err) => {return err});
+      catch((err) => {
+        return err;
+      });
   if (res.status !== 200) {
     return;
   }
@@ -36,7 +38,8 @@ const procCommand = async (message, sock) => {
   output += 'רוח: ' + data['wind']['speed'] + ' קמ"ש בכיוון ' +
       data['wind']['deg'] + ' מעלות' + '\n';
 
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: output},
+      {quoted: message});
 };
 
 module.exports.procCommand = procCommand;

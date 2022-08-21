@@ -1,5 +1,5 @@
 const axios = require('axios');
-const {removeFirstWord} = require("../utils/stringUtils");
+const {removeFirstWord} = require('../utils/stringUtils');
 
 const reqPayload = JSON.stringify({
   'requests': [
@@ -80,7 +80,8 @@ const procCommand = async (message, sock) => {
   let output = '*----' + reqCityName + '----*\n';
   output += 'צבע: ' + getColorName(reqCity['score']) + ' (' + reqCity['score'] +
       '/10)' + '\n';
-  output += 'חולים פעילים ל10,000 תושבים: ' + reqCity['activeSickTo1000'] + '\n';
+  output += 'חולים פעילים ל10,000 תושבים: ' + reqCity['activeSickTo1000'] +
+      '\n';
   output += 'אחוז בדיקות חיוביות: ' +
       (reqCity['positiveTests'] * 100).toFixed(1) + '%\n';
   output += 'שיעור שינוי המאומתים: ' +
@@ -91,7 +92,8 @@ const procCommand = async (message, sock) => {
   output += 'חיסון שלישי: ' + reqCity['thirdDose'] + '%\n';
   output += 'חולים חדשים ל10,000 תושבים: ' + reqCity['sickTo10000'];
 
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: output},
+      {quoted: message});
 };
 
 module.exports = procCommand;

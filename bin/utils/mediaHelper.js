@@ -5,6 +5,7 @@ const axios = require('axios');
 const {tmpdir} = require('os');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
+// eslint-disable-next-line no-unused-vars
 const {Exif, Metadata} = require('wa-sticker-formatter');
 const {genUUID} = require('./random.js');
 const sharp = require('sharp');
@@ -43,7 +44,7 @@ const Settings = require('../../config/mediaHelper.json');
  *
  * @param {Buffer} data - webp media.
  * @param {Metadata} [metadata] - the metadata of the sticker.
- * @returns {Promise<Buffer>} buffer containing the finished sticker.
+ * @return {Promise<Buffer>} buffer containing the finished sticker.
  */
 const formatWebpSticker = async (data, metadata = Settings.defaultMetadata) => {
   return new Exif(metadata).add(data);
@@ -53,7 +54,7 @@ const formatWebpSticker = async (data, metadata = Settings.defaultMetadata) => {
  * Formats image(stored in buffer) to webp.
  *
  * @param {Buffer} data - the image to process.
- * @returns {Promise<Buffer>} - the webp image.
+ * @return {Promise<Buffer>} - the webp image.
  */
 const formatImageToWebp = async (data) => {
   const img = sharp(data).webp({
@@ -73,10 +74,11 @@ const formatImageToWebp = async (data) => {
 /**
  * Formats a video(stored in buffer) to webp.
  *
- * @param data - the video to process.
- * @param type - the file format of the video.
- * @param {FFmpegOptions} [ffmpegOptions={}] - the processing options for ffmpeg.
- * @returns {Promise<Buffer>} - the webp video.
+ * @param {Buffer} data - the video to process.
+ * @param {string} type - the file format of the video.
+ * @param {FFmpegOptions} [ffmpegOptions={}] - the processing options for
+ * ffmpeg.
+ * @return {Promise<Buffer>} - the webp video.
  */
 const formatVideoToWebp = async (data, type, ffmpegOptions = {}) => {
   ffmpegOptions = _normalizeFFmpegOptions(ffmpegOptions);
@@ -114,7 +116,7 @@ const _webpProcessor = async (video, ffmpegOptions) => {
       '-vcodec',
       'libwebp',
       '-vf',
-      // eslint-disable-next-line no-useless-escape
+      // eslint-disable-next-line max-len
       `scale=\'iw*min(300/iw\,300/ih)\':\'ih*min(300/iw\,300/ih)\',format=rgba,pad=300:300:\'(300-iw)/2\':\'(300-ih)/2\':\'#00000000\',setsar=1,fps=${Settings.video.fps}`,
       '-loop',
       '0',
@@ -192,7 +194,7 @@ const filePathToWebp = async (filePath, ffmpegOptions = {}) => {
   // Get file extension.
   const fileType = path.extname(filePath).slice(1);
   if (!ffmpegOptions.input.includes('-f')) {
-    let formats = await _getFFmpegFormats();
+    const formats = await _getFFmpegFormats();
     // Check if file extension is a format in ffmpeg.
     // Also take care of images.
     if (fileType in formats) {
@@ -225,7 +227,7 @@ const filePathToSticker = async (
  * Creates a buffer out of the media attached to a message.
  *
  * @param {IMessage} message - the message.
- * @returns {Promise<Buffer>} - the attached media in buffer format.
+ * @return {Promise<Buffer>} - the attached media in buffer format.
  */
 const downloadMedia = async (message) => {
   let stream;
@@ -243,7 +245,7 @@ const downloadMedia = async (message) => {
       return null;
   }
   let buffer = Buffer.from([]);
-  for await(const chunk of stream) {
+  for await (const chunk of stream) {
     buffer = Buffer.concat([buffer, chunk]);
   }
   return buffer;
@@ -263,7 +265,7 @@ const urlToBuffer = async (url) => {
 /**
  * Returns all formats available in ffmpeg.
  *
- * @returns {Promise<unknown>}
+ * @return {Promise<unknown>}
  * @private
  */
 const _getFFmpegFormats = async () => {
@@ -282,7 +284,7 @@ const _getFFmpegFormats = async () => {
  * Merges provided options with the default options.
  *
  * @param {FFmpegOptions} ffmpegOptions - the options to normalize.
- * @returns {FFmpegOptions} - the merged options.
+ * @return {FFmpegOptions} - the merged options.
  * @private
  */
 const _normalizeFFmpegOptions = (ffmpegOptions) => {
@@ -296,7 +298,7 @@ const _normalizeFFmpegOptions = (ffmpegOptions) => {
  * Generate a path for a temporary file.
  *
  * @param {string} [extension] - the extension of the file.
- * @returns {string} - the path to the temporary file.
+ * @return {string} - the path to the temporary file.
  * @private
  */
 const _genTempPath = (extension = '') => {
@@ -310,9 +312,9 @@ const _genTempPath = (extension = '') => {
  * Saves a buffer to a temporary file.
  * DISCLAIMER: BE SURE TO UNLINK THE FILE AFTER USAGE.
  *
- * @param buffer - the buffer to save.
- * @param extension - the extension of the file.
- * @returns {string} - the path to the temporary file.
+ * @param {buffer} buffer - the buffer to save.
+ * @param {string} extension - the extension of the file.
+ * @return {string} - the path to the temporary file.
  * @private
  */
 const _saveBufferToFile = (buffer, extension = '') => {

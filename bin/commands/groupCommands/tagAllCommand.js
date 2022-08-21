@@ -1,4 +1,4 @@
-const {getContentType} = require("@adiwajshing/baileys");
+const {getContentType} = require('@adiwajshing/baileys');
 const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
 /**
  *
@@ -7,7 +7,8 @@ const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
  * @return {false|boolean|*}
  */
 const isGroupAdmin = (message, chat) => {
-  return chat.participants.find(par=>par.id===message.key.participant).admin !==null;
+  return chat.participants.find(
+      (par) => par.id === message.key.participant).admin !== null;
 };
 
 /**
@@ -17,7 +18,8 @@ const isGroupAdmin = (message, chat) => {
  * @return {boolean}
  */
 const isPrivileged = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant);
+  return message.key.fromMe ||
+      privilegedUsers.includes(message.key.participant);
 };
 
 /**
@@ -28,31 +30,35 @@ const isPrivileged = (message) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-  const isGroup = message.key.remoteJid.endsWith("@g.us");
-  if(!isGroup || !(isPrivileged(message) || isGroupAdmin(message, await sock.groupMetadata(message.key.remoteJid)))) {
+  const isGroup = message.key.remoteJid.endsWith('@g.us');
+  if (!isGroup || !(isPrivileged(message) ||
+      isGroupAdmin(message, await sock.groupMetadata(message.key.remoteJid)))) {
     return;
   }
-  const chat =  await sock.groupMetadata(message.key.remoteJid);
-  let output = "";
-  let mentions = [];
+  const chat = await sock.groupMetadata(message.key.remoteJid);
+  let output = '';
+  const mentions = [];
   for (const participant of chat.participants) {
     mentions.push(participant.id);
-    output += `@${participant.id.split("@")[0]} `;
+    output += `@${participant.id.split('@')[0]} `;
   }
-  if (getContentType(message.message)==="extendedTextMessage" && message.message.extendedTextMessage.contextInfo.quotedMessage){
+  if (getContentType(message.message) === 'extendedTextMessage' &&
+      message.message.extendedTextMessage.contextInfo.quotedMessage) {
     const contextInfo = message.message.extendedTextMessage.contextInfo;
     const msg = {
       key: {
         remoteJid: message.key.remoteJid,
         id: contextInfo.stanzaId,
-        participant: contextInfo.participant
+        participant: contextInfo.participant,
       },
-      message: contextInfo.quotedMessage
-    }
-    await sock.sendMessage(message.key.remoteJid, {text: output, mentions: mentions}, {quoted: msg});
+      message: contextInfo.quotedMessage,
+    };
+    await sock.sendMessage(message.key.remoteJid,
+        {text: output, mentions: mentions}, {quoted: msg});
     return;
   }
-  await sock.sendMessage(message.key.remoteJid, {text: output, mentions: mentions});
+  await sock.sendMessage(message.key.remoteJid,
+      {text: output, mentions: mentions});
 };
 
 module.exports = procCommand;

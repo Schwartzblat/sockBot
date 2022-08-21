@@ -4,7 +4,8 @@ const apiKeys = require('../../../config/apiKeys.json');
 const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
 
 const isAdmin = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant || message.key.remoteJid);
+  return message.key.fromMe || privilegedUsers.includes(
+      message.key.participant || message.key.remoteJid);
 };
 /**
  * Process sentiment command.
@@ -41,7 +42,8 @@ const procCommand = async (message, sock) => {
   const matches = response.data.match(regex);
   const data = matches[2];
   const buffer = Buffer.from(data, 'base64');
-  await sock.sendMessage(message.key.remoteJid, {audio: buffer}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {audio: buffer},
+      {quoted: message});
 };
 
 module.exports = procCommand;

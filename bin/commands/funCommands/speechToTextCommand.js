@@ -6,6 +6,7 @@ const Crypto = require('crypto');
 const fs = require('fs');
 const {getContentType} = require('@adiwajshing/baileys');
 const {downloadMedia} = require('../../utils/mediaHelper');
+
 /**
  * Returns a random temp path.
  *
@@ -44,16 +45,22 @@ const saveFileToTempPath = async (buffer, mimeType) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-
-  if (getContentType(message.message)!=="extendedTextMessage" || getContentType(message.message?.extendedTextMessage?.contextInfo?.quotedMessage) !== "audioMessage") {
+  if (getContentType(message.message) !== 'extendedTextMessage' ||
+      getContentType(
+          message.message?.extendedTextMessage?.contextInfo?.quotedMessage) !==
+      'audioMessage') {
     return;
   }
-  const media = await downloadMedia(message.message.extendedTextMessage.contextInfo.quotedMessage);
-  if (media.length >20*1000000){
-    await sock.sendMessage(message.key.remoteJid, {text: "הקלטה זו ארוכה מדי"}, {quoted: message});
+  const media = await downloadMedia(
+      message.message.extendedTextMessage.contextInfo.quotedMessage);
+  if (media.length > 20 * 1000000) {
+    await sock.sendMessage(message.key.remoteJid, {text: 'הקלטה זו ארוכה מדי'},
+        {quoted: message});
     return;
   }
-  const mimetype = message.message.extendedTextMessage.contextInfo.quotedMessage.audioMessage.mimetype.split(";")[0].split("/")[1];
+  const mimetype = message.message.extendedTextMessage.contextInfo.
+      quotedMessage.audioMessage.mimetype.
+      split(';')[0].split('/')[1];
   const tempPath = await saveFileToTempPath(media, mimetype);
   const res = await execa('python', [
     path.resolve(
@@ -64,7 +71,7 @@ const procCommand = async (message, sock) => {
   // Remove temp files.
   try {
     fs.unlinkSync(tempPath);
-    fs.unlinkSync(tempPath.split('.')[0] +"." + mimetype);
+    fs.unlinkSync(tempPath.split('.')[0] + '.' + mimetype);
   } catch (err) {
     console.error(err);
   }
@@ -73,7 +80,8 @@ const procCommand = async (message, sock) => {
     return;
   }
   const output = 'התמלול של ההודעה הסתיים:' + '\n' + file.toString();
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: output},
+      {quoted: message});
 };
 
 module.exports = procCommand;

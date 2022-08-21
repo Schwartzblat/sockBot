@@ -6,7 +6,8 @@ const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
  * @return {false|boolean|*}
  */
 const isGroupAdmin = (message, chat) => {
-  return chat.participants.find(par=>par.id===message.key.participant).admin !==null;
+  return chat.participants.find(
+      (par) => par.id === message.key.participant).admin !== null;
 };
 
 /**
@@ -16,7 +17,8 @@ const isGroupAdmin = (message, chat) => {
  * @return {boolean}
  */
 const isPrivileged = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant);
+  return message.key.fromMe ||
+      privilegedUsers.includes(message.key.participant);
 };
 
 /**
@@ -27,15 +29,17 @@ const isPrivileged = (message) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-  if(isPrivileged(message)){
-    await sock.sendMessage(message.key.remoteJid, {text: "אתה אדמין של הבוט"}, {quoted: message});
-    return;
-  }else if(message.key.remoteJid.endsWith("g.us") && await isGroupAdmin(message, await sock.groupMetadata(message.key.remoteJid))){
-    await sock.sendMessage(message.key.remoteJid, {text: "אתה מנהל קבוצה"}, {quoted: message});
-    return;
-  }else{
-    await sock.sendMessage(message.key.remoteJid, {text: "אתה משתמש רגיל"}, {quoted: message});
-    return;
+  if (isPrivileged(message)) {
+    await sock.sendMessage(message.key.remoteJid, {text: 'אתה אדמין של הבוט'},
+        {quoted: message});
+  } else if (message.key.remoteJid.endsWith('g.us') &&
+      await isGroupAdmin(message,
+          await sock.groupMetadata(message.key.remoteJid))) {
+    await sock.sendMessage(message.key.remoteJid, {text: 'אתה מנהל קבוצה'},
+        {quoted: message});
+  } else {
+    await sock.sendMessage(message.key.remoteJid, {text: 'אתה משתמש רגיל'},
+        {quoted: message});
   }
 };
 

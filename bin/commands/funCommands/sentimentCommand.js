@@ -9,7 +9,8 @@ const ApiKeys = require('../../../config/apiKeys.json');
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-  const quotedMessage = message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+  const quotedMessage = message.message?.extendedTextMessage?.contextInfo?.
+      quotedMessage;
   if (!quotedMessage) {
     return;
   }
@@ -23,10 +24,10 @@ const procCommand = async (message, sock) => {
     url: 'https://text-sentiment.p.rapidapi.com/analyze',
     headers: {
       'content-type': 'application/json',
-      'x-rapidapi-key':  ApiKeys['sentiment-analysis4.p.rapidapi.com'],
-      'x-rapidapi-host': 'text-sentiment.p.rapidapi.com'
+      'x-rapidapi-key': ApiKeys['sentiment-analysis4.p.rapidapi.com'],
+      'x-rapidapi-host': 'text-sentiment.p.rapidapi.com',
     },
-    data: {text: translatedQuote}
+    data: {text: translatedQuote},
   };
 
   const res = await axios.request(options).catch((error) => {
@@ -38,18 +39,21 @@ const procCommand = async (message, sock) => {
   const resData = res.data;
   let output = '*ניתוח ההודעה בוצע*' + '\n';
   output += 'ו--------------------------------ו' + '\n';
-  output += 'אחוזי חיוביות: ' + parseFloat(resData['pos_percent']).toFixed(2) + '%\n';
-  output += 'אחוזי שליליות: ' + parseFloat(resData['neg_percent']).toFixed(2) + '%\n';
-  output += 'אחוזי נייטרליות: ' + parseFloat(resData['mid_percent']).toFixed(2)+'%';
+  output += 'אחוזי חיוביות: ' + parseFloat(resData['pos_percent']).toFixed(2) +
+      '%\n';
+  output += 'אחוזי שליליות: ' + parseFloat(resData['neg_percent']).toFixed(2) +
+      '%\n';
+  output += 'אחוזי נייטרליות: ' +
+      parseFloat(resData['mid_percent']).toFixed(2) + '%';
   const contextInfo = message.message.extendedTextMessage.contextInfo;
   const msg = {
     key: {
       remoteJid: message.key.remoteJid,
       id: contextInfo.stanzaId,
-      participant: contextInfo.participant
+      participant: contextInfo.participant,
     },
-    message: contextInfo.quotedMessage
-  }
+    message: contextInfo.quotedMessage,
+  };
   await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: msg});
 };
 

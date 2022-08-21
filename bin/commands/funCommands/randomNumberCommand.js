@@ -19,10 +19,11 @@ const procCommand = async (message, sock) => {
     max = temp;
   }
   let output = getRandomIntInclusive(min, max).toString();
-  if(output==='infinity'){
-    output = 'מספר זה גדול מדי.'
+  if (output === 'infinity') {
+    output = 'מספר זה גדול מדי.';
   }
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: output},
+      {quoted: message});
 };
 
 module.exports = procCommand;

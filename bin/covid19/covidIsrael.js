@@ -24,7 +24,7 @@ const requestPayload = JSON.stringify({
       'id': '4',
       'queryName': 'vaccinated',
       'single': false,
-      'parameters': {days:1},
+      'parameters': {days: 1},
     },
     {
       'id': '5',
@@ -40,8 +40,6 @@ const requestPayload = JSON.stringify({
     },
   ],
 });
-
-
 
 const requestOptions = {
   method: 'POST',
@@ -64,7 +62,8 @@ const requestOptions = {
  */
 const procCommand = async (message, sock) => {
   const res = await axios.request(requestOptions).
-      catch((err) => {});
+      catch((err) => {
+      });
   if (!res || res.status !== 200) {
     return;
   }
@@ -72,18 +71,19 @@ const procCommand = async (message, sock) => {
   const covidData = res.data;
   const patientsStatus = covidData[0].data;
   const infectedData = covidData[1].data;
-  const patientsLocation= covidData[2].data;
+  const patientsLocation = covidData[2].data;
   const vaccinatedData = covidData[3].data;
   const deadPatientsData = covidData[4].data;
   const testResultsData = covidData[5].data;
 
   const infectedSum = infectedData[infectedData.length - 1]['sum'];
-  const activePatients = patientsLocation[0]['amount']+patientsLocation[1]['amount']+patientsLocation[2]['amount'];
+  const activePatients = patientsLocation[0]['amount'] +
+      patientsLocation[1]['amount'] + patientsLocation[2]['amount'];
   const infectedToday = infectedData[infectedData.length - 1]['amount'];
   const deadToday = deadPatientsData[deadPatientsData.length - 1]['amount'];
   const deadSum = deadPatientsData[deadPatientsData.length - 1]['total'];
-  const patientsHardStatus = patientsStatus[0]["amount"]
-  const activeBreath = patientsStatus[3]["amount"]
+  const patientsHardStatus = patientsStatus[0]['amount'];
+  const activeBreath = patientsStatus[3]['amount'];
   const recovered = infectedData[infectedData.length - 1]['recovered'];
   const infectedWeekAverage = infectedData[infectedData.length - 1]['avg'];
   const testsToday = testResultsData[testResultsData.length - 1]['amount'];
@@ -104,12 +104,16 @@ const procCommand = async (message, sock) => {
   output += deadSum.toLocaleString() + ' מתים מתחילת המגיפה' + '\n';
   output += activeBreath.toLocaleString() + ' מונשמים' + '\n';
   output += recovered.toLocaleString() + ' מחלימים היום' + '\n';
-  output += infectedWeekAverage.toLocaleString() + ' חולים חדשים בממוצע השבוע' + '\n';
+  output += infectedWeekAverage.toLocaleString() + ' חולים חדשים בממוצע השבוע' +
+      '\n';
   output += testsToday.toLocaleString() + ' בדיקות היום' + '\n';
-  output += testsPositivePercentageToday + '% בדיקות חיוביות'+'\n';
-  output += vaccinatedData[0]["vaccinated_validity_perc"].toLocaleString() + '% מחוסנים בתוקף' + '\n';
-  output += vaccinatedData[0]["not_vaccinated_perc"].toLocaleString() + '% לא מחוסנים' + '\n';
+  output += testsPositivePercentageToday + '% בדיקות חיוביות' + '\n';
+  output += vaccinatedData[0]['vaccinated_validity_perc'].toLocaleString() +
+      '% מחוסנים בתוקף' + '\n';
+  output += vaccinatedData[0]['not_vaccinated_perc'].toLocaleString() +
+      '% לא מחוסנים' + '\n';
 
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: output},
+      {quoted: message});
 };
 module.exports = procCommand;

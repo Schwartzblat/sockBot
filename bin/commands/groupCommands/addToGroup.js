@@ -8,7 +8,8 @@ const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
  * @return {boolean}
  */
 const isPrivileged = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant);
+  return message.key.fromMe ||
+      privilegedUsers.includes(message.key.participant);
 };
 
 /**
@@ -17,7 +18,7 @@ const isPrivileged = (message) => {
  * @return {false|boolean|*}
  */
 const isGroupAdmin = (participant, chat) => {
-  return chat.participants.find(par=>par.id===participant).admin !==null;
+  return chat.participants.find((par) => par.id === participant).admin !== null;
 };
 /**
  * @param {proto.IWebMessageInfo} message
@@ -25,17 +26,21 @@ const isGroupAdmin = (participant, chat) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-  if(!message.key.remoteJid.endsWith('@g.us')){
+  if (!message.key.remoteJid.endsWith('@g.us')) {
     return;
   }
-  const chat =  await sock.groupMetadata(message.key.remoteJid);
-  if(!isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", chat) || (!isPrivileged(message) && !isGroupAdmin(message.key.participant, chat))){
+  const chat = await sock.groupMetadata(message.key.remoteJid);
+  if (!isGroupAdmin(sock.user.id.split(':')[0] + '@s.whatsapp.net', chat) ||
+      (!isPrivileged(message) &&
+          !isGroupAdmin(message.key.participant, chat))) {
     return;
   }
 
   const phone = parsePhone(removeFirstWord(message.body));
-  await sock.groupParticipantsUpdate(message.key.remoteJid, [phone+"@s.whatsapp.net"], "add");
-  await sock.sendMessage(message.key.remoteJid, {text: "בוצע"}, {quoted: message});
+  await sock.groupParticipantsUpdate(message.key.remoteJid,
+      [phone + '@s.whatsapp.net'], 'add');
+  await sock.sendMessage(message.key.remoteJid, {text: 'בוצע'},
+      {quoted: message});
 };
 
 module.exports = procCommand;

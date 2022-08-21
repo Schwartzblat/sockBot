@@ -71,53 +71,64 @@ const removeFirstWord = (str) => {
  * @param {string} phone
  * @return {*}
  */
-const parsePhone = (phone)=>{
+const parsePhone = (phone) => {
   let outputPhone = '';
-  for(let i=0;i<phone.length;i++){
-    if(['0','1','2','3','4','5','6','7','8','9'].includes(phone[i])){
-      outputPhone +=  phone[i];
+  for (let i = 0; i < phone.length; i++) {
+    if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(phone[i])) {
+      outputPhone += phone[i];
     }
   }
-  return outputPhone.startsWith('0') ? '972'+outputPhone.substring(1) : outputPhone;
-}
+  return outputPhone.startsWith('0') ?
+      '972' + outputPhone.substring(1) :
+      outputPhone;
+};
 
 const removeEmojis = (str) => {
   const regex = emojiRegex();
   return str.replace(regex, '');
 };
-const replaceAll = (str, find, replace)=>{
+const replaceAll = (str, find, replace) => {
   return str.replace(new RegExp(find, 'g'), replace);
-}
+};
 /**
  *
  * @param {string} text
  * @return {boolean}
  */
-const isAskToAsk = (text)=>{
-  const keyWords1 = ["יודע", "לעזור", "מישהו", "יכול", "בשאלה", "מבין", "מכיר", "מישהו", "עזרה"];
-  const keyWords2 = ["יכול לעזור", "טוב ב", "מבין ב", "מישהו יודע"];
-  const blackList = ["איך", "למה"];
-  for (let word of blackList){
-    if (text.includes(word)){
+const isAskToAsk = (text) => {
+  const keyWords1 = [
+    'יודע',
+    'לעזור',
+    'מישהו',
+    'יכול',
+    'בשאלה',
+    'מבין',
+    'מכיר',
+    'מישהו',
+    'עזרה'];
+  const keyWords2 = ['יכול לעזור', 'טוב ב', 'מבין ב', 'מישהו יודע'];
+  const blackList = ['איך', 'למה'];
+  for (const word of blackList) {
+    if (text.includes(word)) {
       return false;
     }
   }
   let counter = 0;
-  for(let word of keyWords1){
-    if(text.includes(word)){
+  for (const word of keyWords1) {
+    if (text.includes(word)) {
       counter++;
     }
   }
-  if(counter<3){
+  if (counter < 3) {
     return false;
   }
-  for(let word of keyWords2){
-    if(text.includes(word)){
+  for (const word of keyWords2) {
+    if (text.includes(word)) {
       return true;
     }
   }
   return false;
-}
+};
 module.exports = {
   containsHe,
   reverse,
@@ -127,5 +138,5 @@ module.exports = {
   parsePhone,
   removeEmojis,
   replaceAll,
-  isAskToAsk
+  isAskToAsk,
 };

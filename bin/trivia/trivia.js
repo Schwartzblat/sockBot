@@ -26,7 +26,8 @@ class Trivia extends MiniGame {
     this.chatId = message.key.remoteJid;
     // Cap question count.
 
-    let numOfQuestion = parseInt(removeFirstWord(message.body)) || Config.defaultQuestionCount;
+    let numOfQuestion = parseInt(removeFirstWord(message.body)) ||
+        Config.defaultQuestionCount;
     if (numOfQuestion > Config.maxQuestionCount) {
       numOfQuestion = Config.maxQuestionCount;
     }
@@ -45,11 +46,12 @@ class Trivia extends MiniGame {
    * @param {makeWASocket} sock
    */
   async procMessage(message, sock) {
-    if (message.body==='!סוף_משחק'){
+    if (message.body === '!סוף_משחק') {
       await this.gameOver();
       return;
     }
-    await this.processAnswer(message, message.key.participant || message.key.remoteJid);
+    await this.processAnswer(message,
+        message.key.participant || message.key.remoteJid);
   }
 
   /**
@@ -81,7 +83,8 @@ class Trivia extends MiniGame {
     this.questionCounter++;
     this.currentQuestion = new QuestionEntry(this.triviaJson[
         getRandomInt(0, this.triviaJson.length)]);
-    await this.sock.sendMessage(this.chatId, {text: this.currentQuestion.toString()});
+    await this.sock.sendMessage(this.chatId,
+        {text: this.currentQuestion.toString()});
   }
 
   /**
@@ -124,8 +127,10 @@ class Trivia extends MiniGame {
       await this.gameOver();
       return;
     }
-    await this.sock.sendMessage(this.chatId,{text: 'הסיבוב נגמר, שאלה הבאלה תתחיל בעוד ' +
-        Config.sleepTime / 1000 + ' שניות'});
+    await this.sock.sendMessage(this.chatId, {
+      text: 'הסיבוב נגמר, שאלה הבאלה תתחיל בעוד ' +
+          Config.sleepTime / 1000 + ' שניות',
+    });
     await sleep(Config.sleepTime);
     await this.withdrawQuestion();
   }
@@ -147,7 +152,8 @@ class Trivia extends MiniGame {
       return;
     }
     if (receivedParsedAnswer === (this.getCorrectAnswerIndex() + 1)) {
-      await this.sock.sendMessage(this.chatId, {text: 'תשובה נכונה!'}, {quoted: receivedAnswer});
+      await this.sock.sendMessage(this.chatId, {text: 'תשובה נכונה!'},
+          {quoted: receivedAnswer});
       this.alterParticipantScore(userId, Config.correctReward);
       await this.roundOver();
     } else {
@@ -170,7 +176,8 @@ class Trivia extends MiniGame {
       output += participant.toString();
       mentions.push(participant.getId());
     }
-    await this.sock.sendMessage(this.chatId, {text: output, mentions: mentions}, {});
+    await this.sock.sendMessage(this.chatId, {text: output, mentions: mentions},
+        {});
   }
 }
 

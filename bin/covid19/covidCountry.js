@@ -46,7 +46,7 @@ const procCommand = async (message, sock) => {
     return;
   }
   const country = res.data['countries_stat'].find((countryEntry) =>
-      countryEntry['country_name'].toUpperCase() ===
+    countryEntry['country_name'].toUpperCase() ===
       translatedReqCountryName.toUpperCase());
   if (!country) {
     return;
@@ -64,7 +64,8 @@ const procCommand = async (message, sock) => {
       '\n';
   output += country['deaths_per_1m_population'] + ' מתים למיליון איש';
 
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: output},
+      {quoted: message});
 };
 
 module.exports = procCommand;
