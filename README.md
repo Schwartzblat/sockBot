@@ -109,7 +109,7 @@ Install dependencies
 > docker-compose up
 ```
 
-### Special commands preparation:
+## Special commands preparation:
 
 #### WhoIs command:
 
@@ -127,20 +127,6 @@ and subscribe to these APIes (all of them are free).
 2. https://openweathermap.org
 3. https://rapidapi.com/spamakashrajtech/api/corona-virus-world-and-india-data
 4. https://rapidapi.com/fyhao/api/text-sentiment-analysis-method
-
-### Usage
-
-Start with npm
-
-```bash
-> npm start
-```
-
-Or with node
-
-```bash
-> node lib/bot.js
-```
 
 # Thanks
 
