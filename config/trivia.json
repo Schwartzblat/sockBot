@@ -1,8 +1,0 @@
-{
-  "questionsFile": "./public/questionsFile.json",
-  "defaultQuestionCount": 5,
-  "maxQuestionCount": 40,
-  "sleepTime": 5000,
-  "correctReward": 10,
-  "mistakePenalty": -7
-}

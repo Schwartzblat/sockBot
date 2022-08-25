@@ -1,9 +1,0 @@
-/node_modules/
-/session/
-/test/
-/.dcignore
-/blacklist.db
-/package-lock.json
-/config/admins.json
-/config/apiKeys.json
-/config/whoIs.json
