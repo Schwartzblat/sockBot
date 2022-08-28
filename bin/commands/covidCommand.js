@@ -13,7 +13,9 @@ const procCommand = async (message, sock) => {
   if (message.message.conversation.split(' ').length === 1) {
     await covidIsrael(message, sock);
   } else {
-    await covidCity(message, sock);
+    if (await covidCity(message, sock)){
+      return;
+    }
     await covidCountry(message, sock);
   }
 };

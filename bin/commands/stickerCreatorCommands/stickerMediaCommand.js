@@ -1,5 +1,5 @@
 const {getContentType} = require("@adiwajshing/baileys");
-const {imageToSticker, videoToSticker, downloadMedia} = require("../../utils/mediaHelper");
+const {imageMessageToSticker, videoToSticker, downloadMedia} = require("../../utils/mediaHelper");
 
 const getSticker = async (message)=>{
   if (!message){
@@ -7,7 +7,7 @@ const getSticker = async (message)=>{
   }
   switch(getContentType(message)){
     case "imageMessage":
-      return await imageToSticker(message, undefined);
+      return await imageMessageToSticker(message, undefined);
     case "videoMessage":
       return;
       return await videoToSticker(message, undefined);
@@ -30,7 +30,7 @@ const procCommand = async (message, sock) => {
   if (!sticker){
     return;
   }
-  await sock.sendMessage(message.key.remoteJid, {sticker: await sticker.toBuffer()}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {sticker: sticker}, {quoted: message});
 };
 
 module.exports = procCommand;

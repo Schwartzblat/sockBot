@@ -92,6 +92,7 @@ const procCommand = async (message, sock) => {
   output += 'חולים חדשים ל10,000 תושבים: ' + reqCity['sickTo10000'];
 
   await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  return true;
 };
 
 module.exports = procCommand;

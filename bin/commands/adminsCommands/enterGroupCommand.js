@@ -59,7 +59,7 @@ const procCommand = async (message, sock) => {
   if(!isAdmin(message) || !message?.message?.extendedTextMessage?.contextInfo?.quotedMessage){
     return;
   }
-  const quoted = message.message.extendedTextMessage.contextInfo.quotedMessage.conversation;
+  const quoted = message.message.extendedTextMessage.contextInfo.quotedMessage.extendedTextMessage.text;
   if(quoted.split("סוג: ").length<1){
     return;
   }

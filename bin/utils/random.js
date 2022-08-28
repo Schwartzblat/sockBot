@@ -1,4 +1,5 @@
 const seedRandom = require('seedrandom');
+const {v4: uuidv4} = require('uuid');
 
 /**
  * @typedef RandomProperties
@@ -48,6 +49,18 @@ const randomFromArr = (arr, props = {}) => {
   return arr[getRandomInt(0, arr.length, props)];
 };
 
+
+/**
+ * Returns a randomly generated uuid.
+ *
+ * @return {string} uuid
+ */
+const genUUID = () => {
+  // Maybe use uuidv5 instead?
+  return uuidv4();
+};
+
+
 /**
  * Returns a random key based on custom distribution based on the keys' weights.
  * @param {Object} obj
@@ -82,4 +95,5 @@ module.exports = {
   getRandomInt,
   randomFromArr,
   getRandomDistributed,
+  genUUID,
 };

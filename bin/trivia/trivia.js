@@ -24,7 +24,7 @@ class Trivia extends MiniGame {
     super();
     this.sock = sock;
     this.chatId = message.key.remoteJid;
-    // Cap question count.
+    this.running = true;
 
     let numOfQuestion = parseInt(removeFirstWord(message.body)) || Config.defaultQuestionCount;
     if (numOfQuestion > Config.maxQuestionCount) {
@@ -77,6 +77,9 @@ class Trivia extends MiniGame {
    * @return {Promise<void>}
    */
   async withdrawQuestion() {
+    if (!this.running){
+      return;
+    }
     // TODO: Remove withdrawn question from object.
     this.questionCounter++;
     this.currentQuestion = new QuestionEntry(this.triviaJson[
@@ -162,6 +165,7 @@ class Trivia extends MiniGame {
    * @return {Promise<void>}
    */
   async gameOver() {
+    this.running = false;
     super.gameOver();
     let output = '*נגמר המשחק!*\n';
     const mentions = [];

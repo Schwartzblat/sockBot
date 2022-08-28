@@ -6,7 +6,20 @@ const {getRandomIntInclusive} = require('../../utils/random');
 const {shadow} = require('../../utils/imageEffects');
 const {Sticker} = require('wa-sticker-formatter');
 const path = require('path');
-const defaultImagePath = path.resolve(__dirname, '../../../public/defaultProfilePic.png');
+const {privilegedUsers} = require('../../../config/admins.json');
+const defaultImagePath = path.resolve(__dirname,
+    '../../../public/defaultProfilePic.png');
+
+/**
+ * Checks if message has been sent by a privileged user.
+ * @param {proto.IWebMessageInfo} message
+ * @return {*}
+ */
+const isPrivileged = (message) => {
+  return message.key.fromMe || privilegedUsers.includes(
+      message.key.participant || message.key.remoteJid);
+};
+
 /**
  *
  * @param {makeInMemoryStore} store
@@ -14,8 +27,9 @@ const defaultImagePath = path.resolve(__dirname, '../../../public/defaultProfile
  * @return {string}
  */
 const getNameByPhone = (store, phone) => {
-    return store.contacts[phone] || phone.split("@")[0];
+  return store.contacts[phone] || phone.split('@')[0];
 };
+
 /**
  * Returns a random number between 0 and 100, uses names as seed.
  *
@@ -60,7 +74,7 @@ const maskProfilePic = async (profilePic) => {
  */
 const drawProfilePic = async (image, profilePicUrl, onRight) => {
   const downloadedPic = await Jimp.read(profilePicUrl).
-      catch((err) => console.log(err));
+  catch((err) => console.log(err));
   if (!downloadedPic) {
     return;
   }
@@ -99,32 +113,48 @@ const drawLovePercentage = async (image, percentage) => {
   const text = percentage.toString() + '%';
   const textWidth = Jimp.measureText(font, text);
   const textHeight = Jimp.measureTextHeight(font, text, 260);
-  await image.print(
+  const fontBuffer = new Jimp(image.getWidth(), image.getHeight());
+  await fontBuffer.print(
       font,
       (image.getWidth() - textWidth) / 2 + 4,
       (image.getHeight() - textHeight) / 2 - 10,
       text,
   );
+  await shadow(fontBuffer, 0, 0, {opacity: 0.2, size: 1, blur: 10, x: 0, y: 0});
+  await image.composite(fontBuffer, 0, 0);
 };
 
 const drawHeart = async (image, filledPercentage) => {
-  const heartEmpty = await Jimp.read('./public/loveCalculator/heartEmpty.png');
-  await heartEmpty.resize(230, 230);
-  const heartFilled = await Jimp.read(
-      './public/loveCalculator/heartFilled.png');
-  await heartFilled.resize(230, 230);
+  if (filledPercentage >= 0) {
+    filledPercentage = Math.min(filledPercentage, 100);
+    const heartEmpty = await Jimp.read(
+        './public/loveCalculator/heartEmpty.png');
+    await heartEmpty.resize(230, 230);
+    const heartFilled = await Jimp.read(
+        './public/loveCalculator/heartFilled.png');
+    await heartFilled.resize(230, 230);
 
-  const heightBar = heartEmpty.getHeight() * (100 - filledPercentage) / 100;
-  await heartFilled.crop(0, heightBar, heartFilled.getWidth(),
-      heartFilled.getHeight() - heightBar);
-  const heartComp = await heartEmpty.composite(heartFilled, 0, heightBar);
+    const heightBar = heartEmpty.getHeight() * (100 - filledPercentage) / 100;
+    await heartFilled.crop(0, heightBar, heartFilled.getWidth(),
+        heartFilled.getHeight() - heightBar);
+    const heartComp = await heartEmpty.composite(heartFilled, 0, heightBar);
 
-  const heartRender = await shadow(heartComp, 40, 40,
-      {opacity: 0.3, size: 1, blur: 10, x: 0, y: 0});
+    const heartRender = await shadow(heartComp, 40, 40,
+        {opacity: 0.3, size: 1, blur: 10, x: 0, y: 0});
 
-  const x = (image.getWidth() - heartRender.getWidth()) / 2;
-  const y = (image.getHeight() - heartRender.getHeight()) / 2;
-  await image.composite(heartRender, x, y);
+    const x = (image.getWidth() - heartRender.getWidth()) / 2;
+    const y = (image.getHeight() - heartRender.getHeight()) / 2;
+    await image.composite(heartRender, x, y);
+  } else {
+    const heartBroken = await Jimp.read(
+        './public/loveCalculator/heartBroken.png');
+    await heartBroken.resize(250, 230);
+    const heartRender = await shadow(heartBroken, 40, 40,
+        {opacity: 0.3, size: 1, blur: 10, x: 0, y: 0});
+    const x = (image.getWidth() - heartRender.getWidth()) / 2;
+    const y = (image.getHeight() - heartRender.getHeight()) / 2;
+    await image.composite(heartRender, x, y);
+  }
 };
 
 const addDecoration = async (image) => {
@@ -140,18 +170,19 @@ const addDecoration = async (image) => {
  * @param {string} phone2
  * @param {makeWASocket} sock
  * @param {makeInMemoryStore} store
- * @param {string} chatId
+ * @param {number} lovePercentage
  * @return {Promise<Jimp>}
  */
-const generateLoveImage = async (phone1, phone2, sock , store, chatId) => {
+const generateLoveImage = async (
+    phone1, phone2, sock, store, lovePercentage = undefined) => {
   const loveImage = await Jimp.read(
       './public/loveCalculator/loveBackground.png');
-  const image1 = await sock.profilePictureUrl(phone1, "image").catch(err => {
+  const image1 = await sock.profilePictureUrl(phone1, 'image').catch((err) => {
     return defaultImagePath;
-  })
-  const image2 = await sock.profilePictureUrl(phone2, "image").catch(err=>{
+  });
+  const image2 = await sock.profilePictureUrl(phone2, 'image').catch((err) => {
     return defaultImagePath;
-  } )
+  });
   await drawProfilePic(loveImage, image1, false);
   await drawProfilePic(loveImage, image2, true);
   const name1 = getNameByPhone(store, phone1);
@@ -160,7 +191,11 @@ const generateLoveImage = async (phone1, phone2, sock , store, chatId) => {
   await drawProfileName(loveImage, name1, false);
   await drawProfileName(loveImage, name2, true);
 
-  const lovePercentage = getLovePercentage(phone1.split("@")[0], phone2.split("@")[0]);
+  if (!lovePercentage) {
+    lovePercentage = getLovePercentage(phone1.split('@')[0],
+        phone2.split('@')[0]);
+  }
+
   await drawHeart(loveImage, lovePercentage);
   await drawLovePercentage(loveImage, lovePercentage);
 
@@ -178,26 +213,38 @@ const generateLoveImage = async (phone1, phone2, sock , store, chatId) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock, store) => {
-  if (!message.message?.extendedTextMessage?.contextInfo?.mentionedJid){
+  if (!message.message?.extendedTextMessage?.contextInfo?.mentionedJid) {
     return;
   }
   const mentions = message.message.extendedTextMessage.contextInfo.mentionedJid;
   if (mentions.length === 1) {
     mentions.push(message.key.participant || message.key.remoteJid);
   }
-  if (mentions[0] === mentions[1] || mentions[0]===message.key.participant) {
+  if (mentions[0] === mentions[1] || mentions[0] === message.key.participant) {
     return;
   }
-  const loveImage = await generateLoveImage(mentions[0], mentions[1], sock, store, message.key.remoteJid);
+
+  let lovePercentage = undefined;
+  if (isPrivileged(message)) {
+    const messageParts = message.body.split(' ');
+    if (messageParts.length > 1 &&
+        !isNaN(messageParts[messageParts.length - 1])) {
+      lovePercentage = parseInt(messageParts[messageParts.length - 1]);
+    }
+  }
+
+  const loveImage = await generateLoveImage(mentions[0], mentions[1], sock,
+      store, lovePercentage);
   const loveBuffer = await loveImage.getBufferAsync(Jimp.MIME_PNG);
   const sticker = new Sticker(loveBuffer, {
-    pack: "pack",
-    author: "author",
-    type: "full",
-    quality: 100
+    pack: 'pack',
+    author: 'author',
+    type: 'full',
+    quality: 100,
   });
   const buffer = await sticker.toBuffer();
-  await sock.sendMessage(message.key.remoteJid, {sticker: buffer}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {sticker: buffer},
+      {quoted: message});
 };
 
 module.exports = procCommand;

@@ -54,8 +54,9 @@ def get_large_audio_transcription(path):
     # return the text for all chunks detected
     return whole_text
 
-file = open(os.path.join(os.path.dirname(__file__), 'temp.txt'), mode="w", encoding="utf8")
-file.write(str(get_large_audio_transcription(filename)))
+output = str(get_large_audio_transcription(filename))
+file = open(os.path.join(os.path.dirname(__file__), 'temp1.txt'), mode="w", encoding="utf8")
+file.write(output)
 file.close()
 try:
     shutil.rmtree(os.path.join(os.path.dirname(__file__), "audio-chunks"))

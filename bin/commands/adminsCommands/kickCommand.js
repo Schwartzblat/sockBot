@@ -24,11 +24,11 @@ const isGroupAdmin = (participant, chat) => {
 /**
  *
  * @param {string} phone
- * @param {makeInMemoryStore} store
+ * @param {GroupMetadata} groupMetadata
  */
-const findCommonGroups = async(phone, store)=>{
+const findCommonGroups = async(phone, groupMetadata)=>{
   const commonGroups = [];
-  for(const [id, groupInfo] of Object.entries(store.groupMetadata)) {
+  for(const [id, groupInfo] of Object.entries(groupMetadata)) {
     if (groupInfo.participants.find(par => par.id.split("@")[0]===phone)) {
       commonGroups.push(id);
     }
@@ -61,11 +61,12 @@ const procCommand = async (message, sock, store) => {
     }
   }
   if(removeFirstWord(message.body).split(" ")[0] === "הכל" && isPrivileged(message)){
-    const jids = await findCommonGroups(phone, store);
+    const groupMetadata = await sock.groupFetchAllParticipating();
+    const jids = await findCommonGroups(phone, groupMetadata);
     let errorCounter = 0;
     for (const jid of jids){
       try {
-        if (!isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", store.groupMetadata[jid])){
+        if (!isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", groupMetadata[jid])){
           errorCounter++;
           continue;
         }
