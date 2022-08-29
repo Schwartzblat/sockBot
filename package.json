@@ -10,7 +10,7 @@
   "author": "Alon Schwartzblat",
   "license": "ISC",
   "dependencies": {
-    "@adiwajshing/baileys": "^4.0.0",
+    "@adiwajshing/baileys": "github:adiwajshing/baileys",
     "@hapi/boom": "^9.1.4",
     "@vitalets/google-translate-api": "^7.0.0",
     "axios": "0.21.1",
@@ -20,15 +20,17 @@
     "execa": "^5.1.1",
     "fluent-ffmpeg": "^2.1.2",
     "jimp": "^0.16.1",
+    "link-preview-js": "^2.1.13",
     "mime": "^1.6.0",
     "node-fetch": "^3.2.0",
     "pino": "^7.6.5",
+    "sharp": "^0.30.7",
     "sqlite3": "^5.0.2",
+    "string-similarity": "^4.0.4",
     "tinycolor2": "^1.4.2",
+    "uuid": "^8.3.2",
     "wa-sticker-formatter": "^4.3.2",
-    "yargs": "^17.3.1",
-    "iconv": "^3.0.0",
-    "iconv-lite": "^0.4.24"
+    "yargs": "^17.3.1"
   },
   "devDependencies": {
     "datauri": "^4.1.0",
