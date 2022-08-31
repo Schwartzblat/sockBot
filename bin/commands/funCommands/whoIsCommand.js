@@ -47,7 +47,7 @@ const generateAuthorization = async(message, sock)=>{
  */
 const procCommand = async (message, sock) => {
     let phone = parsePhone(removeFirstWord(message.body));
-    if(message?.message?.extendedTextMessage?.contextInfo.mentionedJid){
+    if(message?.message?.extendedTextMessage?.contextInfo?.mentionedJid?.length>0){
         phone = message.message.extendedTextMessage.contextInfo.mentionedJid[0].split(":")[0].split('@')[0];
     }
     if (!phone || phone.length>14){
