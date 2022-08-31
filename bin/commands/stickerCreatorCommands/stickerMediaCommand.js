@@ -1,5 +1,5 @@
 const {getContentType} = require("@adiwajshing/baileys");
-const {imageMessageToSticker, videoToSticker, downloadMedia} = require("../../utils/mediaHelper");
+const {imageMessageToSticker, videoMessageToSticker, downloadMedia} = require("../../utils/mediaHelper");
 
 const getSticker = async (message)=>{
   if (!message){
@@ -9,8 +9,7 @@ const getSticker = async (message)=>{
     case "imageMessage":
       return await imageMessageToSticker(message, undefined);
     case "videoMessage":
-      return;
-      return await videoToSticker(message, undefined);
+      return await videoMessageToSticker(message, undefined);
     case "extendedTextMessage":
       return await getSticker(message?.extendedTextMessage?.contextInfo?.quotedMessage);
     default:
