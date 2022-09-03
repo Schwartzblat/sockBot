@@ -12,17 +12,7 @@ const procCommand = async (message, sock) => {
         return;
     }
     const output = base+"?q="+encodeURIComponent(text);
-    const template = generateWAMessageFromContent(generateMessageID(), proto.Message.fromObject({
-        extendedTextMessage: {
-            text: output,
-            matchedText: output,
-            canonicalUrl: base,
-            previewType: 0,
-            title: "Here, Let Me Google That For You",
-            description: "Passive-aggressively teach your friends how to Google. For all those people who find it more convenient to ask you rather than search it themselves. Not associated with Google."
-        }
-    }), {quoted: message});
     // await sock.relayMessage(message.key.remoteJid, template.message, template.key.id);
-    await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message, });
+    await sock.sendMessage(message.key.remoteJid, {text: output});
 };
 module.exports = procCommand;
