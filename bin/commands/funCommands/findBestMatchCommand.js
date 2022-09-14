@@ -1,15 +1,6 @@
-const Jimp = require('jimp');
-const {Sticker} = require('wa-sticker-formatter');
-const path = require('path');
-const defaultImagePath = path.resolve(__dirname, '../../../public/defaultProfilePic.png');
 const {proto} = require('@adiwajshing/baileys');
-const {removeFirstWord} = require('../../utils/stringUtils');
 const {getRandomIntInclusive} = require('../../utils/random');
-const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
-
-const isAdmin = (message) => {
-    return message.key.fromMe || privilegedUsers.includes(message.key.participant || message.key.remoteJid);
-};
+const {isPrivileged} = require('../../utils/permissionsUtils');
 
 /**
  * Returns a random number between 0 and 100, uses names as seed.
@@ -32,7 +23,7 @@ const getLovePercentage = (phone1, phone2) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-    if (!isAdmin(message) || !message.key.remoteJid.endsWith("g.us")){
+    if (!isPrivileged(message) || !message.key.remoteJid.endsWith("g.us")){
         return;
     }
     const chat = await sock.groupMetadata(message.key.remoteJid);
