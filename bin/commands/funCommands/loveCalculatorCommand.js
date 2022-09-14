@@ -6,19 +6,10 @@ const {getRandomIntInclusive} = require('../../utils/random');
 const {shadow} = require('../../utils/imageEffects');
 const {Sticker} = require('wa-sticker-formatter');
 const path = require('path');
-const {privilegedUsers} = require('../../../config/admins.json');
 const defaultImagePath = path.resolve(__dirname,
     '../../../public/defaultProfilePic.png');
+const {isPrivileged} = require('../../utils/permissionsUtils');
 
-/**
- * Checks if message has been sent by a privileged user.
- * @param {proto.IWebMessageInfo} message
- * @return {*}
- */
-const isPrivileged = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(
-      message.key.participant || message.key.remoteJid);
-};
 
 /**
  *
@@ -220,9 +211,9 @@ const procCommand = async (message, sock, store) => {
   if (mentions.length === 1) {
     mentions.push(message.key.participant || message.key.remoteJid);
   }
-  if (mentions[0] === mentions[1] || mentions[0] === message.key.participant) {
-    return;
-  }
+  // if (mentions[0] === mentions[1] || mentions[0] === message.key.participant) {
+  //   return;
+  // }
 
   let lovePercentage = undefined;
   if (isPrivileged(message)) {
