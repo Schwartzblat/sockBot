@@ -1,24 +1,7 @@
 const {removeFirstWord, parsePhone} = require('../../utils/stringUtils');
-const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
+const {isPrivileged, isGroupAdminId, gammaGroupId, isGammaAdmin} = require('../../utils/permissionsUtils');
 
-/**
- * Checks if someone is allowed to use command.
- *
- * @param {proto.IWebMessageInfo} message
- * @return {boolean}
- */
-const isPrivileged = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant);
-};
 
-/**
- * @param {string} participant
- * @param {GroupMetadata} chat
- * @return {false|boolean|*}
- */
-const isGroupAdmin = (participant, chat) => {
-  return chat.participants.find(par=>par.id===participant).admin !==null;
-};
 /**
  * @param {proto.IWebMessageInfo} message
  * @param {makeWASocket} sock
@@ -29,7 +12,7 @@ const procCommand = async (message, sock) => {
     return;
   }
   const chat =  await sock.groupMetadata(message.key.remoteJid);
-  if(!isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", chat) || (!isPrivileged(message) && !isGroupAdmin(message.key.participant, chat))){
+  if(!isGroupAdminId(sock.user.id.split(":")[0]+"@s.whatsapp.net", chat) || (!isPrivileged(message) && !(isGroupAdminId(message.key.participant, chat) || (message.key.remoteJid===gammaGroupId && isGammaAdmin(message))))){
     return;
   }
 

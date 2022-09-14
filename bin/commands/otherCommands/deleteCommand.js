@@ -1,22 +1,5 @@
-const {privilegedUsers} = require("../../../config/admins.json");
+const {isPrivileged, isGroupAdmin} = require('../../utils/permissionsUtils');
 
-/**
- *
- * @param {proto.IWebMessageInfo} message
- * @param {GroupMetadata} chat
- * @return {false|boolean|*}
- */
-const isGroupAdmin = (message, chat) => {
-  return chat.participants.find(par=>par.id===message.key.participant).admin !==null;
-};
-/**
- *
- * @param {proto.IWebMessageInfo} message
- * @returns {*}
- */
-const isAdmin = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant || message.key.remoteJid);
-};
 /**
  *
  * @param {proto.IWebMessageInfo} message
@@ -34,7 +17,7 @@ const procCommand = async (message, sock) =>{
       return;
     }
     const chat = await sock.groupMetadata(message.key.remoteJid);
-    if(!isGroupAdmin(message, chat) && !isAdmin(message)){
+    if(!isGroupAdmin(message, chat) && !isPrivileged(message)){
       return;
     }
   }

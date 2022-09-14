@@ -1,17 +1,8 @@
 const yargs = require('yargs/yargs');
 const stringSimilarity = require("string-similarity");
 const {parsePhone} = require("../../utils/stringUtils");
-const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
+const {isPrivileged} = require('../../utils/permissionsUtils');
 
-/**
- * Checks if someone is allowed to use command.
- *
- * @param {proto.IWebMessageInfo} message
- * @return {boolean}
- */
-const isPrivileged = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant);
-};
 
 /**
  * Process survey command.

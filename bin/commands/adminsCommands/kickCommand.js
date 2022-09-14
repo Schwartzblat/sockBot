@@ -1,25 +1,7 @@
 const {removeFirstWord, parsePhone} = require('../../utils/stringUtils');
-const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
+const {isPrivilegedId, isGroupAdmin, isGroupAdminId, gammaGroupId, isGammaAdmin} = require('../../utils/permissionsUtils');
 
 
-/**
- * Checks if someone is allowed to use command.
- *
- * @param {proto.IWebMessageInfo} message
- * @return {boolean}
- */
-const isPrivileged = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant);
-};
-
-/**
- * @param {string} participant
- * @param {GroupMetadata} chat
- * @return {false|boolean|*}
- */
-const isGroupAdmin = (participant, chat) => {
-  return chat.participants.find(par=>par.id===participant).admin !==null;
-};
 
 /**
  *
@@ -60,6 +42,10 @@ const procCommand = async (message, sock, store) => {
       phone = parsePhone(removeFirstWord(message.body));
     }
   }
+  if(isPrivilegedId(phone)){
+    await sock.sendMessage(message.key.remoteJid, {text: "אתה לא יכול להסיר אדמין"}, {quoted: message});
+    return;
+  }
   if(removeFirstWord(message.body).split(" ")[0] === "הכל" && isPrivileged(message)){
     const groupMetadata = await sock.groupFetchAllParticipating();
     const jids = await findCommonGroups(phone, groupMetadata);
@@ -78,7 +64,7 @@ const procCommand = async (message, sock, store) => {
     await sock.sendMessage(message.key.remoteJid, {text:"המספר "+phone+" הוסר בהצלחה ב"+(jids.length-errorCounter)+"/"+jids.length+" קבוצות"}, {quoted: message});
     return;
   }
-  if(isGroupAdmin(message.key.participant, chat) && isGroupAdmin(sock.user.id.split(":")[0]+"@s.whatsapp.net", chat)){
+  if((isGroupAdmin(message, chat) || (message.key.remoteJid===gammaGroupId && isGammaAdmin(message))) && isGroupAdminId(sock.user.id.split(":")[0]+"@s.whatsapp.net", chat)){
     try {
       await sock.groupParticipantsUpdate(message.key.remoteJid, [phone+"@s.whatsapp.net"], "remove");
       await sock.sendMessage(message.key.remoteJid, {text: "בוצע"}, {quoted: message});

@@ -1,24 +1,6 @@
 const {getContentType} = require("@adiwajshing/baileys");
-const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
-/**
- *
- * @param {proto.IWebMessageInfo} message
- * @param {GroupMetadata} chat
- * @return {false|boolean|*}
- */
-const isGroupAdmin = (message, chat) => {
-  return chat.participants.find(par=>par.id===message.key.participant).admin !==null;
-};
+const {isPrivileged, isGroupAdmin} = require('../../utils/permissionsUtils');
 
-/**
- * Checks if someone is allowed to use command.
- *
- * @param {proto.IWebMessageInfo} message
- * @return {boolean}
- */
-const isPrivileged = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant);
-};
 
 /**
  * Process tagAll command.
@@ -43,7 +25,7 @@ const procCommand = async (message, sock) => {
     const contextInfo = message.message.extendedTextMessage.contextInfo;
     const msg = {
       key: {
-        remoteJid: message.key.remoteJid,
+        remoteJid: message.key.remoteJid /*contextInfo.remoteJid*/,
         id: contextInfo.stanzaId,
         participant: contextInfo.participant
       },

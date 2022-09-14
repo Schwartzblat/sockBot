@@ -2,11 +2,8 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const {removeFirstWord, parsePhone} = require('../../utils/stringUtils');
 const {getContentType} = require("@adiwajshing/baileys");
-const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
+const {isPrivileged} = require('../../utils/permissionsUtils');
 
-const isAdmin = (message) => {
-    return message.key.fromMe || privilegedUsers.includes(message.key.participant || message.key.remoteJid);
-};
 /**
  * add phone to blacklist.
  *
@@ -15,7 +12,7 @@ const isAdmin = (message) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-    if(!isAdmin(message)){
+    if(!isPrivileged(message)){
         return;
     }
     let sql;

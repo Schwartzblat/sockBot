@@ -1,8 +1,5 @@
-const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
+const {isPrivileged} = require('../../utils/permissionsUtils');
 
-const isAdmin = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant || message.key.remoteJid);
-};
 
 /**
  * A simple failsafe command.
@@ -10,7 +7,7 @@ const isAdmin = (message) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message) => {
-  if (isAdmin(message)) {
+  if (isPrivileged(message)) {
     process.exit(-1);
   }
 };

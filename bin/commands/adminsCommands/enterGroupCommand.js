@@ -1,7 +1,5 @@
-const {privilegedUsers} = require('../../../config/admins.json');
-const isAdmin = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant || message.key.remoteJid);
-};
+const {isPrivileged} = require('../../utils/permissionsUtils');
+
 /**
  * @param {string} text
  */
@@ -56,7 +54,7 @@ const joinToGroupByInvite = async (sock, code, expiration, admin, groupJid)=> {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-  if(!isAdmin(message) || !message?.message?.extendedTextMessage?.contextInfo?.quotedMessage){
+  if(!isPrivileged(message) || !message?.message?.extendedTextMessage?.contextInfo?.quotedMessage){
     return;
   }
   const quoted = message.message.extendedTextMessage.contextInfo.quotedMessage.extendedTextMessage.text;
