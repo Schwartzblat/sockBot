@@ -1,11 +1,8 @@
 const axios = require('axios').default;
 const {removeFirstWord} = require('../../utils/stringUtils');
 const apiKeys = require('../../../config/apiKeys.json');
-const privilegedUsers = require('../../../config/admins.json').privilegedUsers;
+const {isPrivileged} = require('../../utils/permissionsUtils');
 
-const isAdmin = (message) => {
-  return message.key.fromMe || privilegedUsers.includes(message.key.participant || message.key.remoteJid);
-};
 /**
  * Process sentiment command.
  *
@@ -15,7 +12,7 @@ const isAdmin = (message) => {
  */
 const procCommand = async (message, sock) => {
   const text = removeFirstWord(message.body);
-  if (!text || text.length < 3 || text.length > 400 || !isAdmin(message)) {
+  if (!text || text.length < 3 || text.length > 400 || !isPrivileged(message)) {
     return;
   }
 
