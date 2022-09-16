@@ -1,4 +1,4 @@
-const {privilegedUsers} = require("../../config/admins.json");
+const {privilegedUsers} = require('../../config/admins.json');
 
 /**
  * @param {proto.IWebMessageInfo} message
@@ -6,8 +6,8 @@ const {privilegedUsers} = require("../../config/admins.json");
  * @return {boolean}
  */
 const isGroupAdmin = (message, metadata)=>{
-    return metadata.participants.find(par=>par.id===message.key.participant).admin !==null;
-}
+  return metadata.participants.find((par)=>par.id===message.key.participant).admin !==null;
+};
 
 /**
  *
@@ -16,8 +16,8 @@ const isGroupAdmin = (message, metadata)=>{
  * @return {boolean}
  */
 const isGroupAdminId = (phoneId, metadata)=>{
-    return metadata.participants.find(par=>par.id===phoneId).admin !==null;
-}
+  return metadata.participants.find((par)=>par.id===phoneId).admin !==null;
+};
 
 /**
  * Checks if message has been sent by a privileged user.
@@ -25,8 +25,8 @@ const isGroupAdminId = (phoneId, metadata)=>{
  * @return {boolean}
  */
 const isPrivileged = (message) => {
-    return message.key.fromMe || privilegedUsers.includes(
-        message.key.participant || message.key.remoteJid);
+  return message.key.fromMe || privilegedUsers.includes(
+      message.key.participant || message.key.remoteJid);
 };
 
 /**
@@ -35,13 +35,13 @@ const isPrivileged = (message) => {
  * @return {boolean}
  */
 const isPrivilegedId = (id)=>{
-    return privilegedUsers.includes(id);
-}
+  return privilegedUsers.includes(id);
+};
 
 
 module.exports = {
-    isGroupAdmin,
-    isPrivileged,
-    isPrivilegedId,
-    isGroupAdminId
-}
+  isGroupAdmin,
+  isPrivileged,
+  isPrivilegedId,
+  isGroupAdminId,
+};
