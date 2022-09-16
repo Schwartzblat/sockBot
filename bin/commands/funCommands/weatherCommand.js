@@ -33,7 +33,7 @@ const procCommand = async (message, sock) => {
   output += 'רוח: ' + data['wind']['speed'] + ' קמ"ש בכיוון ' +
       data['wind']['deg'] + ' מעלות' + '\n';
 
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted:message});
+  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
 };
 
 module.exports = procCommand;

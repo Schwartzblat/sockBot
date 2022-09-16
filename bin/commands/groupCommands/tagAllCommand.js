@@ -1,4 +1,4 @@
-const {getContentType} = require("@adiwajshing/baileys");
+const {getContentType} = require('@adiwajshing/baileys');
 const {isPrivileged, isGroupAdmin} = require('../../utils/permissionsUtils');
 
 
@@ -10,27 +10,27 @@ const {isPrivileged, isGroupAdmin} = require('../../utils/permissionsUtils');
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-  const isGroup = message.key.remoteJid.endsWith("@g.us");
-  if(!isGroup || !(isPrivileged(message) || isGroupAdmin(message, await sock.groupMetadata(message.key.remoteJid)))) {
+  const isGroup = message.key.remoteJid.endsWith('@g.us');
+  if (!isGroup || !(isPrivileged(message) || isGroupAdmin(message, await sock.groupMetadata(message.key.remoteJid)))) {
     return;
   }
-  const chat =  await sock.groupMetadata(message.key.remoteJid);
-  let output = "";
-  let mentions = [];
+  const chat = await sock.groupMetadata(message.key.remoteJid);
+  let output = '';
+  const mentions = [];
   for (const participant of chat.participants) {
     mentions.push(participant.id);
-    output += `@${participant.id.split("@")[0]} `;
+    output += `@${participant.id.split('@')[0]} `;
   }
-  if (getContentType(message.message)==="extendedTextMessage" && message.message.extendedTextMessage.contextInfo.quotedMessage){
+  if (getContentType(message.message)==='extendedTextMessage' && message.message.extendedTextMessage.contextInfo.quotedMessage) {
     const contextInfo = message.message.extendedTextMessage.contextInfo;
     const msg = {
       key: {
-        remoteJid: message.key.remoteJid /*contextInfo.remoteJid*/,
+        remoteJid: message.key.remoteJid,
         id: contextInfo.stanzaId,
-        participant: contextInfo.participant
+        participant: contextInfo.participant,
       },
-      message: contextInfo.quotedMessage
-    }
+      message: contextInfo.quotedMessage,
+    };
     await sock.sendMessage(message.key.remoteJid, {text: output, mentions: mentions}, {quoted: msg});
     return;
   }

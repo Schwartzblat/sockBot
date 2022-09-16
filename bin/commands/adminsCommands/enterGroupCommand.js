@@ -4,22 +4,22 @@ const {isPrivileged} = require('../../utils/permissionsUtils');
  * @param {string} text
  */
 const textToInviteV4 = (text)=>{
-  const lines = text.split("\n");
+  const lines = text.split('\n');
   return {
-    from: lines[1].split("from: ")[1].trim()+"@s.whatsapp.net",
-    groupJid: lines[2].split("groupJid: ")[1].trim(),
-    inviteCode: lines[3].split("inviteCode: ")[1].trim(),
-    inviteExpiration: lines[4].split("inviteExpiration: ")[1].trim(),
+    from: lines[1].split('from: ')[1].trim()+'@s.whatsapp.net',
+    groupJid: lines[2].split('groupJid: ')[1].trim(),
+    inviteCode: lines[3].split('inviteCode: ')[1].trim(),
+    inviteExpiration: lines[4].split('inviteExpiration: ')[1].trim(),
   };
-}
-const groupLinkPattern = new RegExp("http[s]?://chat\.whatsapp\.com/[a-zA-Z0-9]{5,30}");
+};
+const groupLinkPattern = new RegExp('http[s]?://chat\.whatsapp\.com/[a-zA-Z0-9]{5,30}');
 /**
  *
  * @param {string} text
  */
 const textToGroupLink = (text)=>{
   return text.match(groupLinkPattern).toString();
-}
+};
 
 /**
  *
@@ -39,13 +39,13 @@ const joinToGroupByInvite = async (sock, code, expiration, admin, groupJid)=> {
         xmlns: 'w:g2',
         to: groupJid,
       },
-      content:[{ tag: 'accept', attrs: { code , expiration, admin}}]
+      content: [{tag: 'accept', attrs: {code, expiration, admin}}],
     });
     return res.attrs.from;
   } catch (err) {
     console.log('Unable to join group', err);
   }
-}
+};
 /**
  * add phone to blacklist.
  *
@@ -54,22 +54,22 @@ const joinToGroupByInvite = async (sock, code, expiration, admin, groupJid)=> {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-  if(!isPrivileged(message) || !message?.message?.extendedTextMessage?.contextInfo?.quotedMessage){
+  if (!isPrivileged(message) || !message?.message?.extendedTextMessage?.contextInfo?.quotedMessage) {
     return;
   }
   const quoted = message.message.extendedTextMessage.contextInfo.quotedMessage.extendedTextMessage.text;
-  if(quoted.split("סוג: ").length<1){
+  if (quoted.split('סוג: ').length<1) {
     return;
   }
-  if (quoted.split("\n")[0].split("סוג: ")[1] ==="הזמנה"){
+  if (quoted.split('\n')[0].split('סוג: ')[1] ==='הזמנה') {
     const inviteMessage = textToInviteV4(quoted);
     await joinToGroupByInvite(sock, inviteMessage.inviteCode, inviteMessage.inviteExpiration, inviteMessage.from, inviteMessage.groupJid);
-  }else if(quoted.split("\n")[0].split("סוג: ")[1] ===("קישור")){
-    await sock.groupAcceptInvite(textToGroupLink(quoted).split(".com/")[1]);
-  }else{
+  } else if (quoted.split('\n')[0].split('סוג: ')[1] ===('קישור')) {
+    await sock.groupAcceptInvite(textToGroupLink(quoted).split('.com/')[1]);
+  } else {
     return;
   }
-  await sock.sendMessage(message.key.remoteJid, {text: "בוצע"}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: 'בוצע'}, {quoted: message});
 };
 
 module.exports = procCommand;

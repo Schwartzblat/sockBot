@@ -45,7 +45,7 @@ class Trivia extends MiniGame {
    * @param {makeWASocket} sock
    */
   async procMessage(message, sock) {
-    if (message.body==='!סוף_משחק'){
+    if (message.body==='!סוף_משחק') {
       await this.gameOver();
       return;
     }
@@ -77,7 +77,7 @@ class Trivia extends MiniGame {
    * @return {Promise<void>}
    */
   async withdrawQuestion() {
-    if (!this.running){
+    if (!this.running) {
       return;
     }
     // TODO: Remove withdrawn question from object.
@@ -127,7 +127,7 @@ class Trivia extends MiniGame {
       await this.gameOver();
       return;
     }
-    await this.sock.sendMessage(this.chatId,{text: 'הסיבוב נגמר, שאלה הבאלה תתחיל בעוד ' +
+    await this.sock.sendMessage(this.chatId, {text: 'הסיבוב נגמר, שאלה הבאלה תתחיל בעוד ' +
         Config.sleepTime / 1000 + ' שניות'});
     await sleep(Config.sleepTime);
     await this.withdrawQuestion();

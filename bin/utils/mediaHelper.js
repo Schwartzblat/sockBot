@@ -47,7 +47,7 @@ const Settings = require('../../config/mediaHelper.json');
  * @return {Promise<Buffer>} buffer containing the finished sticker.
  */
 const formatWebpSticker = async (data, metadata = Settings.defaultMetadata) => {
-    return new Exif(metadata).add(data);
+  return new Exif(metadata).add(data);
 };
 
 /**
@@ -57,18 +57,18 @@ const formatWebpSticker = async (data, metadata = Settings.defaultMetadata) => {
  * @return {Promise<Buffer>} - the webp image.
  */
 const formatImageToWebp = async (data) => {
-    const img = sharp(data).webp({
-        quality: Settings.image.quality,
-        lossless: Settings.image.lossless,
-        effort: Settings.image.effort,
-    });
+  const img = sharp(data).webp({
+    quality: Settings.image.quality,
+    lossless: Settings.image.lossless,
+    effort: Settings.image.effort,
+  });
 
-    img.resize(512, 512, {
-        fit: sharp.fit.contain,
-        background: {'r': 0, 'g': 0, 'b': 0, 'alpha': 0},
-    });
+  img.resize(512, 512, {
+    fit: sharp.fit.contain,
+    background: {'r': 0, 'g': 0, 'b': 0, 'alpha': 0},
+  });
 
-    return img.toBuffer();
+  return img.toBuffer();
 };
 
 /**
@@ -81,13 +81,13 @@ const formatImageToWebp = async (data) => {
  * @return {Promise<Buffer>} - the webp video.
  */
 const formatVideoToWebp = async (data, type, ffmpegOptions = {}) => {
-    ffmpegOptions = _normalizeFFmpegOptions(ffmpegOptions);
-    // Input format must be set.
-    if (!ffmpegOptions.input.includes('-f')) {
-        ffmpegOptions.input.push('-f', type);
-    }
+  ffmpegOptions = _normalizeFFmpegOptions(ffmpegOptions);
+  // Input format must be set.
+  if (!ffmpegOptions.input.includes('-f')) {
+    ffmpegOptions.input.push('-f', type);
+  }
 
-    return await _webpProcessor(data, ffmpegOptions);
+  return await _webpProcessor(data, ffmpegOptions);
 };
 
 /**
@@ -99,56 +99,56 @@ const formatVideoToWebp = async (data, type, ffmpegOptions = {}) => {
  * @private
  */
 const _webpProcessor = async (video, ffmpegOptions) => {
-    // FFmpeg doesn't like to work with streams, so instead we use temp files.
-    let inputFile = video;
-    if (video instanceof Buffer) {
-        const fileType = ffmpegOptions.input[ffmpegOptions.input.indexOf('-f') + 1];
-        inputFile = _saveBufferToFile(video, fileType);
-    }
-    const outputFile = _genTempPath('webp');
+  // FFmpeg doesn't like to work with streams, so instead we use temp files.
+  let inputFile = video;
+  if (video instanceof Buffer) {
+    const fileType = ffmpegOptions.input[ffmpegOptions.input.indexOf('-f') + 1];
+    inputFile = _saveBufferToFile(video, fileType);
+  }
+  const outputFile = _genTempPath('webp');
 
-    await new Promise((resolve, reject) => {
-        const ffmpegWorker = ffmpeg(inputFile);
-        ffmpegWorker.on('error', reject);
-        ffmpegWorker.on('end', () => resolve(true));
-        ffmpegWorker.inputOptions(ffmpegOptions.input);
-        ffmpegWorker.outputOptions([
-            '-vcodec',
-            'libwebp',
-            '-vf',
-            // eslint-disable-next-line max-len
-            `scale=\'iw*min(300/iw\,300/ih)\':\'ih*min(300/iw\,300/ih)\',format=rgba,pad=300:300:\'(300-iw)/2\':\'(300-ih)/2\':\'#00000000\',setsar=1,fps=${Settings.video.fps}`,
-            '-loop',
-            '0',
-            '-ss',
-            '00:00:00.0',
-            '-t',
-            Settings.video.maxDuration,
-            '-preset',
-            'default',
-            '-an',
-            '-fps_mode',
-            'passthrough',
-            '-s',
-            '512:512',
-            '-compression_level',
-            Settings.video.effort,
-            '-lossless',
-            Settings.video.lossless,
-            '-quality',
-            Settings.video.quality,
-        ]);
-        ffmpegWorker.outputOptions(ffmpegOptions.output);
-        ffmpegWorker.toFormat('webp');
-        ffmpegWorker.save(outputFile);
-    });
+  await new Promise((resolve, reject) => {
+    const ffmpegWorker = ffmpeg(inputFile);
+    ffmpegWorker.on('error', reject);
+    ffmpegWorker.on('end', () => resolve(true));
+    ffmpegWorker.inputOptions(ffmpegOptions.input);
+    ffmpegWorker.outputOptions([
+      '-vcodec',
+      'libwebp',
+      '-vf',
+      // eslint-disable-next-line max-len
+      `scale=\'iw*min(300/iw\,300/ih)\':\'ih*min(300/iw\,300/ih)\',format=rgba,pad=300:300:\'(300-iw)/2\':\'(300-ih)/2\':\'#00000000\',setsar=1,fps=${Settings.video.fps}`,
+      '-loop',
+      '0',
+      '-ss',
+      '00:00:00.0',
+      '-t',
+      Settings.video.maxDuration,
+      '-preset',
+      'default',
+      '-an',
+      '-fps_mode',
+      'passthrough',
+      '-s',
+      '512:512',
+      '-compression_level',
+      Settings.video.effort,
+      '-lossless',
+      Settings.video.lossless,
+      '-quality',
+      Settings.video.quality,
+    ]);
+    ffmpegWorker.outputOptions(ffmpegOptions.output);
+    ffmpegWorker.toFormat('webp');
+    ffmpegWorker.save(outputFile);
+  });
 
-    const data = fs.readFileSync(outputFile);
-    fs.unlinkSync(outputFile);
-    if (video instanceof Buffer) {
-        fs.unlinkSync(inputFile);
-    }
-    return data;
+  const data = fs.readFileSync(outputFile);
+  fs.unlinkSync(outputFile);
+  if (video instanceof Buffer) {
+    fs.unlinkSync(inputFile);
+  }
+  return data;
 };
 
 /**
@@ -160,9 +160,9 @@ const _webpProcessor = async (video, ffmpegOptions) => {
  */
 const imageMessageToSticker = async (
     message, metadata = Settings.defaultMetadata) => {
-    const media = await downloadMedia(message);
-    const pImage = await formatImageToWebp(media);
-    return formatWebpSticker(pImage, metadata);
+  const media = await downloadMedia(message);
+  const pImage = await formatImageToWebp(media);
+  return formatWebpSticker(pImage, metadata);
 };
 
 /**
@@ -174,10 +174,10 @@ const imageMessageToSticker = async (
  */
 const videoMessageToSticker = async (
     message, metadata = Settings.defaultMetadata) => {
-    const videoBuffer = await downloadMedia(message);
-    const videoType = message.videoMessage.mimetype.split('/')[1];
-    const pVideo = await formatVideoToWebp(videoBuffer, videoType);
-    return formatWebpSticker(pVideo, metadata);
+  const videoBuffer = await downloadMedia(message);
+  const videoType = message.videoMessage.mimetype.split('/')[1];
+  const pVideo = await formatVideoToWebp(videoBuffer, videoType);
+  return formatWebpSticker(pVideo, metadata);
 };
 
 /**
@@ -189,23 +189,23 @@ const videoMessageToSticker = async (
  * @return {Promise<Buffer>}
  */
 const filePathToWebp = async (filePath, ffmpegOptions = {}) => {
-    ffmpegOptions = _normalizeFFmpegOptions(ffmpegOptions);
+  ffmpegOptions = _normalizeFFmpegOptions(ffmpegOptions);
 
-    // Get file extension.
-    const fileType = path.extname(filePath).slice(1);
-    if (!ffmpegOptions.input.includes('-f')) {
-        const formats = await _getFFmpegFormats();
-        // Check if file extension is a format in ffmpeg.
-        // Also take care of images.
-        if (fileType in formats) {
-            ffmpegOptions.input.push('-f', fileType);
-        } else if (fileType === 'jpg' || fileType === 'jpeg' || fileType ===
+  // Get file extension.
+  const fileType = path.extname(filePath).slice(1);
+  if (!ffmpegOptions.input.includes('-f')) {
+    const formats = await _getFFmpegFormats();
+    // Check if file extension is a format in ffmpeg.
+    // Also take care of images.
+    if (fileType in formats) {
+      ffmpegOptions.input.push('-f', fileType);
+    } else if (fileType === 'jpg' || fileType === 'jpeg' || fileType ===
             'png') {
-            ffmpegOptions.input.push('-f', 'image2');
-        }
+      ffmpegOptions.input.push('-f', 'image2');
     }
+  }
 
-    return await _webpProcessor(filePath, ffmpegOptions);
+  return await _webpProcessor(filePath, ffmpegOptions);
 };
 
 /**
@@ -218,9 +218,9 @@ const filePathToWebp = async (filePath, ffmpegOptions = {}) => {
  */
 const filePathToSticker = async (
     filePath, ffmpegOptions = {}, metadata = Settings.defaultMetadata) => {
-    ffmpegOptions = _normalizeFFmpegOptions(ffmpegOptions);
-    const videoBuffer = await filePathToWebp(filePath, ffmpegOptions);
-    return formatWebpSticker(videoBuffer, metadata);
+  ffmpegOptions = _normalizeFFmpegOptions(ffmpegOptions);
+  const videoBuffer = await filePathToWebp(filePath, ffmpegOptions);
+  return formatWebpSticker(videoBuffer, metadata);
 };
 
 /**
@@ -230,25 +230,25 @@ const filePathToSticker = async (
  * @return {Promise<Buffer>} - the attached media in buffer format.
  */
 const downloadMedia = async (message) => {
-    let stream;
-    switch (getContentType(message)) {
-        case 'imageMessage':
-            stream = await downloadContentFromMessage(message.imageMessage, 'image');
-            break;
-        case 'videoMessage':
-            stream = await downloadContentFromMessage(message.videoMessage, 'video');
-            break;
-        case 'audioMessage':
-            stream = await downloadContentFromMessage(message.audioMessage, 'audio');
-            break;
-        default:
-            return null;
-    }
-    let buffer = Buffer.from([]);
-    for await (const chunk of stream) {
-        buffer = Buffer.concat([buffer, chunk]);
-    }
-    return buffer;
+  let stream;
+  switch (getContentType(message)) {
+    case 'imageMessage':
+      stream = await downloadContentFromMessage(message.imageMessage, 'image');
+      break;
+    case 'videoMessage':
+      stream = await downloadContentFromMessage(message.videoMessage, 'video');
+      break;
+    case 'audioMessage':
+      stream = await downloadContentFromMessage(message.audioMessage, 'audio');
+      break;
+    default:
+      return null;
+  }
+  let buffer = Buffer.from([]);
+  for await (const chunk of stream) {
+    buffer = Buffer.concat([buffer, chunk]);
+  }
+  return buffer;
 };
 
 /**
@@ -258,8 +258,8 @@ const downloadMedia = async (message) => {
  * @return {Promise<Buffer>} - the resource in buffer format.
  */
 const urlToBuffer = async (url) => {
-    const response = await axios.get(url, {responseType: 'arraybuffer'});
-    return Buffer.from(response.data, 'utf-8');
+  const response = await axios.get(url, {responseType: 'arraybuffer'});
+  return Buffer.from(response.data, 'utf-8');
 };
 
 /**
@@ -269,15 +269,15 @@ const urlToBuffer = async (url) => {
  * @private
  */
 const _getFFmpegFormats = async () => {
-    return await new Promise((resolve, reject) => {
-        ffmpeg.availableFormats((err, formats) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(formats);
-            }
-        });
+  return await new Promise((resolve, reject) => {
+    ffmpeg.availableFormats((err, formats) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(formats);
+      }
     });
+  });
 };
 
 /**
@@ -288,10 +288,10 @@ const _getFFmpegFormats = async () => {
  * @private
  */
 const _normalizeFFmpegOptions = (ffmpegOptions) => {
-    return {
-        ...{input: [], output: []},
-        ...ffmpegOptions,
-    };
+  return {
+    ...{input: [], output: []},
+    ...ffmpegOptions,
+  };
 };
 
 /**
@@ -302,10 +302,10 @@ const _normalizeFFmpegOptions = (ffmpegOptions) => {
  * @private
  */
 const _genTempPath = (extension = '') => {
-    return path.join(
-        tmpdir(),
-        `${genUUID()}${extension ? `.${extension}` : ''}`,
-    );
+  return path.join(
+      tmpdir(),
+      `${genUUID()}${extension ? `.${extension}` : ''}`,
+  );
 };
 
 /**
@@ -318,19 +318,19 @@ const _genTempPath = (extension = '') => {
  * @private
  */
 const _saveBufferToFile = (buffer, extension = '') => {
-    const filePath = _genTempPath(extension);
-    fs.writeFileSync(filePath, buffer);
-    return filePath;
+  const filePath = _genTempPath(extension);
+  fs.writeFileSync(filePath, buffer);
+  return filePath;
 };
 
 module.exports = {
-    formatWebpSticker,
-    formatImageToWebp,
-    formatVideoToWebp,
-    imageMessageToSticker,
-    videoMessageToSticker,
-    filePathToWebp,
-    filePathToSticker,
-    downloadMedia,
-    urlToBuffer,
+  formatWebpSticker,
+  formatImageToWebp,
+  formatVideoToWebp,
+  imageMessageToSticker,
+  videoMessageToSticker,
+  filePathToWebp,
+  filePathToSticker,
+  downloadMedia,
+  urlToBuffer,
 };

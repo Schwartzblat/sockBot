@@ -24,7 +24,7 @@ const requestPayload = JSON.stringify({
       'id': '4',
       'queryName': 'vaccinated',
       'single': false,
-      'parameters': {days:1},
+      'parameters': {days: 1},
     },
     {
       'id': '5',
@@ -40,7 +40,6 @@ const requestPayload = JSON.stringify({
     },
   ],
 });
-
 
 
 const requestOptions = {
@@ -82,8 +81,8 @@ const procCommand = async (message, sock) => {
   const infectedToday = infectedData[infectedData.length - 1]['amount'];
   const deadToday = deadPatientsData[deadPatientsData.length - 1]['amount'];
   const deadSum = deadPatientsData[deadPatientsData.length - 1]['total'];
-  const patientsHardStatus = patientsStatus[0]["amount"]
-  const activeBreath = patientsStatus[3]["amount"]
+  const patientsHardStatus = patientsStatus[0]['amount'];
+  const activeBreath = patientsStatus[3]['amount'];
   const recovered = infectedData[infectedData.length - 1]['recovered'];
   const infectedWeekAverage = infectedData[infectedData.length - 1]['avg'];
   const testsToday = testResultsData[testResultsData.length - 1]['amount'];
@@ -107,8 +106,8 @@ const procCommand = async (message, sock) => {
   output += infectedWeekAverage.toLocaleString() + ' חולים חדשים בממוצע השבוע' + '\n';
   output += testsToday.toLocaleString() + ' בדיקות היום' + '\n';
   output += testsPositivePercentageToday + '% בדיקות חיוביות'+'\n';
-  output += vaccinatedData[0]["vaccinated_validity_perc"].toLocaleString() + '% מחוסנים בתוקף' + '\n';
-  output += vaccinatedData[0]["not_vaccinated_perc"].toLocaleString() + '% לא מחוסנים' + '\n';
+  output += vaccinatedData[0]['vaccinated_validity_perc'].toLocaleString() + '% מחוסנים בתוקף' + '\n';
+  output += vaccinatedData[0]['not_vaccinated_perc'].toLocaleString() + '% לא מחוסנים' + '\n';
 
   await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
 };

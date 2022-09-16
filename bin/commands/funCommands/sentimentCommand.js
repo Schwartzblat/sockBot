@@ -23,10 +23,10 @@ const procCommand = async (message, sock) => {
     url: 'https://text-sentiment.p.rapidapi.com/analyze',
     headers: {
       'content-type': 'application/json',
-      'x-rapidapi-key':  ApiKeys['sentiment-analysis4.p.rapidapi.com'],
-      'x-rapidapi-host': 'text-sentiment.p.rapidapi.com'
+      'x-rapidapi-key': ApiKeys['sentiment-analysis4.p.rapidapi.com'],
+      'x-rapidapi-host': 'text-sentiment.p.rapidapi.com',
     },
-    data: {text: translatedQuote}
+    data: {text: translatedQuote},
   };
 
   const res = await axios.request(options).catch((error) => {
@@ -46,10 +46,10 @@ const procCommand = async (message, sock) => {
     key: {
       remoteJid: message.key.remoteJid,
       id: contextInfo.stanzaId,
-      participant: contextInfo.participant
+      participant: contextInfo.participant,
     },
-    message: contextInfo.quotedMessage
-  }
+    message: contextInfo.quotedMessage,
+  };
   await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: msg});
 };
 

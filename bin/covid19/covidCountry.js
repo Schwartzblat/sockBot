@@ -46,7 +46,7 @@ const procCommand = async (message, sock) => {
     return;
   }
   const country = res.data['countries_stat'].find((countryEntry) =>
-      countryEntry['country_name'].toUpperCase() ===
+    countryEntry['country_name'].toUpperCase() ===
       translatedReqCountryName.toUpperCase());
   if (!country) {
     return;

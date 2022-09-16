@@ -1,5 +1,5 @@
 const axios = require('axios');
-const {removeFirstWord} = require("../utils/stringUtils");
+const {removeFirstWord} = require('../utils/stringUtils');
 
 const reqPayload = JSON.stringify({
   'requests': [

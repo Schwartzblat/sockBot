@@ -1,7 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const {removeFirstWord, parsePhone} = require('../../utils/stringUtils');
-const {getContentType} = require("@adiwajshing/baileys");
+const {getContentType} = require('@adiwajshing/baileys');
 const {isPrivileged} = require('../../utils/permissionsUtils');
 
 /**
@@ -12,29 +12,29 @@ const {isPrivileged} = require('../../utils/permissionsUtils');
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-    if(!isPrivileged(message)){
-        return;
-    }
-    let sql;
-    if(message.message?.extendedTextMessage?.contextInfo?.mentionedJid?.length>0){
-        const phone = message.message.extendedTextMessage.contextInfo.mentionedJid[0].split("@")[0];
-        sql = "delete from blacklist where phone=\""+phone+"\"";
-    }else{
-        const phone = parsePhone(removeFirstWord(message.body));
-        sql = "delete from blacklist where phone=\""+parsePhone(phone)+"\"";
-    }
+  if (!isPrivileged(message)) {
+    return;
+  }
+  let sql;
+  if (message.message?.extendedTextMessage?.contextInfo?.mentionedJid?.length>0) {
+    const phone = message.message.extendedTextMessage.contextInfo.mentionedJid[0].split('@')[0];
+    sql = 'delete from blacklist where phone="'+phone+'"';
+  } else {
+    const phone = parsePhone(removeFirstWord(message.body));
+    sql = 'delete from blacklist where phone="'+parsePhone(phone)+'"';
+  }
 
-    if(!sql){
-        return;
-    }
+  if (!sql) {
+    return;
+  }
 
-    const db = new sqlite3.Database(path.resolve(__dirname, '../../../blacklist.db'));
-    try {
-        db.run(sql);
-        await sock.sendMessage(message.key.remoteJid, {text: "בוצע"}, {quoted: message});
-    }catch(err){
-        await sock.sendMessage(message.key.remoteJid, {text: "לא עבד"}, {quoted: message});
-    }
+  const db = new sqlite3.Database(path.resolve(__dirname, '../../../blacklist.db'));
+  try {
+    db.run(sql);
+    await sock.sendMessage(message.key.remoteJid, {text: 'בוצע'}, {quoted: message});
+  } catch (err) {
+    await sock.sendMessage(message.key.remoteJid, {text: 'לא עבד'}, {quoted: message});
+  }
 };
 
 module.exports = procCommand;

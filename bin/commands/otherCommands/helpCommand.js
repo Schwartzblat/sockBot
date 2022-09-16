@@ -75,5 +75,5 @@ const procCommand = async (message, sock) => {
   output += '● !חירום- מכבה את הבוט' + '\n';
   await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
 };
-//●
+// ●
 module.exports = procCommand;

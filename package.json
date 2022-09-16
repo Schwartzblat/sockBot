@@ -37,6 +37,9 @@
   },
   "devDependencies": {
     "datauri": "^4.1.0",
+    "eslint": "8.22.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-only-warn": "^1.0.3",
     "seedrandom": "^3.0.5",
     "shuffle-seed": "^1.1.6"
   }

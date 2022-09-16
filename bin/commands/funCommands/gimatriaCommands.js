@@ -12,7 +12,7 @@ const safeGroupsPath = path.resolve(__dirname, '../../../config/safeGroups.json'
 const isSafeGroup = async (message)=>{
   const safeGroups = JSON.parse(await fs.readFileSync(safeGroupsPath));
   return safeGroups.includes(message.key.remoteJid);
-}
+};
 
 
 /**
@@ -23,7 +23,7 @@ const isSafeGroup = async (message)=>{
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-  if(removeFirstWord(message.body).length===0 || await isSafeGroup(message)){
+  if (removeFirstWord(message.body).length===0 || await isSafeGroup(message)) {
     return;
   }
   const requestParams = {
@@ -40,17 +40,17 @@ const procCommand = async (message, sock) => {
     return;
   }
   const data = res.data;
-  let sum, sameSum;
+  let sum; let sameSum;
   try {
-  sum = data.match(
-      new RegExp('התאמות משאילתות הגולשים לתוצאה .*', 'g'))[0].split(
-      '<')[0].split(' ')[4];
-  sameSum = data.match(
-      new RegExp('(<li>((?!([a-zA-z])).)+<\/li>)|(\\);\">(.+)<\/a>)', 'g')).
-      sort(() => Math.random() - 0.5).
-      slice(0, Settings.numberOfEquivalents).
-      map((item) => item.split('>')[1].split('<')[0].trim());
-    }catch(er){
+    sum = data.match(
+        new RegExp('התאמות משאילתות הגולשים לתוצאה .*', 'g'))[0].split(
+        '<')[0].split(' ')[4];
+    sameSum = data.match(
+        new RegExp('(<li>((?!([a-zA-z])).)+<\/li>)|(\\);\">(.+)<\/a>)', 'g')).
+        sort(() => Math.random() - 0.5).
+        slice(0, Settings.numberOfEquivalents).
+        map((item) => item.split('>')[1].split('<')[0].trim());
+  } catch (er) {
     return;
   }
 

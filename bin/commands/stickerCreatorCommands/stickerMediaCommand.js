@@ -1,21 +1,21 @@
-const {getContentType} = require("@adiwajshing/baileys");
-const {imageMessageToSticker, videoMessageToSticker, downloadMedia} = require("../../utils/mediaHelper");
+const {getContentType} = require('@adiwajshing/baileys');
+const {imageMessageToSticker, videoMessageToSticker, downloadMedia} = require('../../utils/mediaHelper');
 
 const getSticker = async (message)=>{
-  if (!message){
+  if (!message) {
     return;
   }
-  switch(getContentType(message)){
-    case "imageMessage":
+  switch (getContentType(message)) {
+    case 'imageMessage':
       return await imageMessageToSticker(message, undefined);
-    case "videoMessage":
+    case 'videoMessage':
       return await videoMessageToSticker(message, undefined);
-    case "extendedTextMessage":
+    case 'extendedTextMessage':
       return await getSticker(message?.extendedTextMessage?.contextInfo?.quotedMessage);
     default:
       return;
   }
-}
+};
 /**
  * Process sticker command.
  *
@@ -24,9 +24,8 @@ const getSticker = async (message)=>{
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-
   const sticker = await getSticker(message.message);
-  if (!sticker){
+  if (!sticker) {
     return;
   }
   await sock.sendMessage(message.key.remoteJid, {sticker: sticker}, {quoted: message});
