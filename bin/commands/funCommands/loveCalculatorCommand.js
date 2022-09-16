@@ -65,7 +65,7 @@ const maskProfilePic = async (profilePic) => {
  */
 const drawProfilePic = async (image, profilePicUrl, onRight) => {
   const downloadedPic = await Jimp.read(profilePicUrl).
-  catch((err) => console.log(err));
+      catch((err) => console.log(err));
   if (!downloadedPic) {
     return;
   }

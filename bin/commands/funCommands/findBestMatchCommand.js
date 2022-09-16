@@ -10,8 +10,8 @@ const {isPrivileged} = require('../../utils/permissionsUtils');
  * @return {number}
  */
 const getLovePercentage = (phone1, phone2) => {
-    const namesArray = [phone1, phone2].sort();
-    return getRandomIntInclusive(0, 100, {seed: namesArray[1] + namesArray[0]});
+  const namesArray = [phone1, phone2].sort();
+  return getRandomIntInclusive(0, 100, {seed: namesArray[1] + namesArray[0]});
 };
 
 /**
@@ -23,30 +23,30 @@ const getLovePercentage = (phone1, phone2) => {
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-    if (!isPrivileged(message) || !message.key.remoteJid.endsWith("g.us")){
-        return;
-    }
-    const chat = await sock.groupMetadata(message.key.remoteJid);
-    let someone = message.key.participant;
-    if (message.message?.extendedTextMessage?.contextInfo?.mentionedJid){
-        someone = message.message.extendedTextMessage.contextInfo.mentionedJid[0];
-    }
-    let matches = [];
-    for (const participant of chat.participants){
-        const obj = {
-            phone: participant.id.split("@")[0],
-            percent: getLovePercentage(participant.id.split("@")[0], someone.split("@")[0])
-        };
-        matches.push(obj);
-    }
-    matches.sort((a, b)=>{
-        return b.percent-a.percent;
-    });
-    let output = '*ההתאמות שלך עם שאר חברי הקבוצה:*\n';
-    for(let i =0;i<matches.length;i++){
-        output+=(i+1)+". "+matches[i].phone+"- "+matches[i].percent+"%\n";
-    }
-    await sock.sendMessage(message.key.participant, {text: output})
+  if (!isPrivileged(message) || !message.key.remoteJid.endsWith('g.us')) {
+    return;
+  }
+  const chat = await sock.groupMetadata(message.key.remoteJid);
+  let someone = message.key.participant;
+  if (message.message?.extendedTextMessage?.contextInfo?.mentionedJid) {
+    someone = message.message.extendedTextMessage.contextInfo.mentionedJid[0];
+  }
+  const matches = [];
+  for (const participant of chat.participants) {
+    const obj = {
+      phone: participant.id.split('@')[0],
+      percent: getLovePercentage(participant.id.split('@')[0], someone.split('@')[0]),
+    };
+    matches.push(obj);
+  }
+  matches.sort((a, b)=>{
+    return b.percent-a.percent;
+  });
+  let output = '*ההתאמות שלך עם שאר חברי הקבוצה:*\n';
+  for (let i =0; i<matches.length; i++) {
+    output+=(i+1)+'. '+matches[i].phone+'- '+matches[i].percent+'%\n';
+  }
+  await sock.sendMessage(message.key.participant, {text: output});
 };
 
 module.exports = procCommand;
