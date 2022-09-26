@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  bot:
+    restart: always
+    build: .
+    volumes:
+      - session:/app/session
+
+volumes:
+  session:
+    name: "sockbot-session-vol"

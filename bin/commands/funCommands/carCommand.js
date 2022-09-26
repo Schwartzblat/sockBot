@@ -1,5 +1,5 @@
 const axios = require('axios').default;
-const {removeFirstWord} = require('..\\..\\utils\\stringUtils');
+const {removeFirstWord} = require('../../utils/stringUtils');
 /**
  * @param {string} id
  */

@@ -59,7 +59,7 @@ const procCommand = async (message, sock) => {
         __dirname + '../../../pythonScripts/speechToText.py'),
     tempPath]);
   const file = fs.readFileSync(
-      path.resolve(__dirname, '..\\..\\pythonScripts\\temp1.txt'), 'utf8');
+      path.resolve(__dirname, '../../pythonScripts/temp1.txt'), 'utf8');
   // Remove temp files.
   try {
     fs.unlinkSync(tempPath);

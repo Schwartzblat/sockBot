@@ -1,8 +1,8 @@
 const axios = require('axios').default;
 const fs = require('fs');
 const path = require('path');
-const config = require('..\\..\\..\\config\\whoIs.json');
-const {removeFirstWord, parsePhone} = require('..\\..\\utils\\stringUtils');
+const config = require('../../../config/whoIs.json');
+const {removeFirstWord, parsePhone} = require('../../utils/stringUtils');
 const headers = {
   'Authorization': config.auth,
 };
@@ -31,7 +31,7 @@ const generateAuthorization = async (message, sock)=>{
   }
   config.auth = response.data['access'];
   headers['Authorization'] = response.data['access'];
-  fs.writeFile(path.resolve(__dirname, '..\\..\\..\\config\\whoIs.json'), JSON.stringify(config), function writeJSON(err) {
+  fs.writeFile(path.resolve(__dirname, '../../../config/whoIs.json'), JSON.stringify(config), function writeJSON(err) {
     if (err) {
       console.log(err);
     }
