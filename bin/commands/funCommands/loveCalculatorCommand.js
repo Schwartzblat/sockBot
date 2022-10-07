@@ -18,7 +18,8 @@ const {isPrivileged} = require('../../utils/permissionsUtils');
  * @return {string}
  */
 const getNameByPhone = (store, phone) => {
-  return store.contacts[phone] || phone.split('@')[0];
+  return (store.contacts[phone]?.notify ||
+      store.contacts[phone]) || phone.split('@')[0];
 };
 
 /**

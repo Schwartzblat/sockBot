@@ -21,16 +21,16 @@ const findCommonGroups = async (phone, groupMetadata)=>{
  *
  * @param {proto.IWebMessageInfo} message
  * @param {makeWASocket} sock
- * @param {makeInMemoryStore} store
  * @return {Promise<void>}
  */
-const procCommand = async (message, sock, store) => {
+const procCommand = async (message, sock) => {
   const isGroup = message.key.remoteJid.endsWith('@g.us');
   if (!isGroup) {
     return;
   }
   const chat = await sock.groupMetadata(message.key.remoteJid);
-  const mentions = message.message?.extendedTextMessage?.contextInfo?.mentionedJid;
+  const mentions = message.message?.extendedTextMessage?.
+      contextInfo?.mentionedJid;
   let phone;
   if (mentions && mentions.length>0) {
     phone = mentions[0].split('@')[0];
@@ -41,7 +41,7 @@ const procCommand = async (message, sock, store) => {
       phone = parsePhone(removeFirstWord(message.body));
     }
   }
-  if (isPrivilegedId(phone)) {
+  if (isPrivilegedId(phone+'@s.whatsapp.net')) {
     await sock.sendMessage(message.key.remoteJid, {text: 'אתה לא יכול להסיר אדמין'}, {quoted: message});
     return;
   }
