@@ -16,7 +16,8 @@ const procCommand = async (message, sock) => {
     return;
   }
   const page = response.data;
-  const tip = page.match(new RegExp('font-size: 28px;\">(.)+', 'g'))[0].split('>')[1];
+  const tip = page.match(new RegExp(
+      'font-size: 28px;\">(.)+', 'g'))[0].split('>')[1];
   await sock.sendMessage(message.key.remoteJid, {text: tip}, {quoted: message});
 };
 module.exports = procCommand;

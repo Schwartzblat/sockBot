@@ -9,7 +9,8 @@ const ApiKeys = require('../../../config/apiKeys.json');
  * @return {Promise<void>}
  */
 const procCommand = async (message, sock) => {
-  const quotedMessage = message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+  const quotedMessage = message.message?.extendedTextMessage?.
+      contextInfo?.quotedMessage;
   if (!quotedMessage) {
     return;
   }
@@ -38,9 +39,12 @@ const procCommand = async (message, sock) => {
   const resData = res.data;
   let output = '*ניתוח ההודעה בוצע*' + '\n';
   output += 'ו--------------------------------ו' + '\n';
-  output += 'אחוזי חיוביות: ' + parseFloat(resData['pos_percent']).toFixed(2) + '%\n';
-  output += 'אחוזי שליליות: ' + parseFloat(resData['neg_percent']).toFixed(2) + '%\n';
-  output += 'אחוזי נייטרליות: ' + parseFloat(resData['mid_percent']).toFixed(2)+'%';
+  output += 'אחוזי חיוביות: ' + parseFloat(
+      resData['pos_percent']).toFixed(2) + '%\n';
+  output += 'אחוזי שליליות: ' + parseFloat(
+      resData['neg_percent']).toFixed(2) + '%\n';
+  output += 'אחוזי נייטרליות: ' + parseFloat(
+      resData['mid_percent']).toFixed(2)+'%';
   const contextInfo = message.message.extendedTextMessage.contextInfo;
   const msg = {
     key: {

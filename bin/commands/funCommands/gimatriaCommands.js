@@ -62,7 +62,8 @@ const procCommand = async (message, sock) => {
   for (let i = 0; i < sameSum.length; i++) {
     output += sameSum[i] + '\n';
   }
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: output},
+      {quoted: message});
 };
 
 module.exports = procCommand;

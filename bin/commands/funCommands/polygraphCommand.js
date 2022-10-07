@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const {getRandomIntInclusive} = require('../../utils/random');
+// eslint-disable-next-line max-len
 const baseOutput = '*עיבוד ההודעה הסתיים*\n--------------------------------\nבהתסמך על קצב הלב שלך, הבעות הפנים ותנועות שריר בלתי רצוניות אפשר לקבוע באופן חד משמעי את התוצאות הבאות:\n';
 /**
  *
@@ -13,8 +14,10 @@ const procCommand = async (message, sock) => {
   if (!contextInfo?.quotedMessage) {
     return;
   }
-  const expressions = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../../public/expressions.json'), 'utf8'));
-  const expression = expressions[getRandomIntInclusive(0, expressions.length - 1, {seed: contextInfo.stanzaId})];
+  const expressions = JSON.parse(fs.readFileSync(path.resolve(
+      __dirname, '../../../public/expressions.json'), 'utf8'));
+  const expression = expressions[getRandomIntInclusive(
+      0, expressions.length - 1, {seed: contextInfo.stanzaId})];
   let output = baseOutput;
   if (sock.user.id.split(':')[0] === contextInfo.participant.split('@')[0]) {
     output='איך אתה מעז לפקפק באמיתות ההודעות שלי?!';

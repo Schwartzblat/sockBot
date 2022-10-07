@@ -35,7 +35,8 @@ const procCommand = async (message, sock) => {
   for (const participant of chat.participants) {
     const obj = {
       phone: participant.id.split('@')[0],
-      percent: getLovePercentage(participant.id.split('@')[0], someone.split('@')[0]),
+      percent: getLovePercentage(participant.id.split('@')[0],
+          someone.split('@')[0]),
     };
     matches.push(obj);
   }

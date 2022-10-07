@@ -38,7 +38,8 @@ const procCommand = async (message, sock) => {
   const matches = response.data.match(regex);
   const data = matches[2];
   const buffer = Buffer.from(data, 'base64');
-  await sock.sendMessage(message.key.remoteJid, {audio: buffer}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid,
+      {audio: buffer}, {quoted: message});
 };
 
 module.exports = procCommand;

@@ -1,5 +1,5 @@
 const {getContentType} = require('@adiwajshing/baileys');
-const {imageMessageToSticker, videoMessageToSticker, downloadMedia} = require('../../utils/mediaHelper');
+const {imageMessageToSticker, videoMessageToSticker} = require('../../utils/mediaHelper');
 
 const getSticker = async (message)=>{
   if (!message) {

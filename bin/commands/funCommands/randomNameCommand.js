@@ -32,7 +32,8 @@ const procCommand = async (message, sock) => {
   const output = records[getRandomInt(0, records.length)]['שם פרטי'] + ' ' +
       lastNames[getRandomInt(0, lastNames.length)]['family'];
 
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid,
+      {text: output}, {quoted: message});
 };
 
 module.exports = procCommand;

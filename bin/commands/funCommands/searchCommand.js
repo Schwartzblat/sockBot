@@ -1,5 +1,4 @@
 const {removeFirstWord} = require('../../utils/stringUtils');
-const {generateWAMessageFromContent, proto, generateMessageID} = require('@adiwajshing/baileys');
 const base = 'https://googlethatforyou.com';
 /**
  * @param {proto.IWebMessageInfo} message
@@ -12,7 +11,6 @@ const procCommand = async (message, sock) => {
     return;
   }
   const output = base+'?q='+encodeURIComponent(text);
-  // await sock.relayMessage(message.key.remoteJid, template.message, template.key.id);
   await sock.sendMessage(message.key.remoteJid, {text: output});
 };
 module.exports = procCommand;

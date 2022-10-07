@@ -10,7 +10,8 @@ const {removeFirstWord} = require('../../utils/stringUtils');
  */
 const procCommand = async (message, sock) => {
   const name = removeFirstWord(message.body);
-  const quoted = message?.message?.extendedTextMessage?.contextInfo.quotedMessage;
+  const quoted = message?.message?.extendedTextMessage?.
+      contextInfo.quotedMessage;
   if (!quoted || !quoted.conversation || quoted.conversation.startsWith('!')) {
     return;
   }

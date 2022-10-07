@@ -44,17 +44,22 @@ const procCommand = async (message, sock) => {
     switch (media.split('.')[media.split('.').length-1]) {
       case 'jpg':
       case 'png':
-        await sock.sendMessage(message.key.remoteJid, {caption: output, image: await urlToBuffer(media)}, {quoted: message});
+        await sock.sendMessage(message.key.remoteJid, {caption: output,
+          image: await urlToBuffer(media)}, {quoted: message});
         return;
       case 'mp4':
-        await sock.sendMessage(message.key.remoteJid, {caption: output, video: await urlToBuffer(media)}, {quoted: message});
+        await sock.sendMessage(message.key.remoteJid,
+            {caption: output, video: await urlToBuffer(media)},
+            {quoted: message});
         return;
       default:
-        await sock.sendMessage(message.key.remoteJid, {text: 'פורמט לא נתמך: '+media}, {quoted: message});
+        await sock.sendMessage(message.key.remoteJid,
+            {text: 'פורמט לא נתמך: '+media}, {quoted: message});
         return;
     }
   } else {
-    await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+    await sock.sendMessage(message.key.remoteJid,
+        {text: output}, {quoted: message});
   }
 };
 module.exports = procCommand;

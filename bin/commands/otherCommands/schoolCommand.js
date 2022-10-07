@@ -23,6 +23,7 @@ const getSchoolList = async ()=>{
  * @return {boolean}
  */
 const isEmpty = (obj)=>{
+  // eslint-disable-next-line guard-for-in
   for (const key in obj) {
     return false;
   }

@@ -2,6 +2,8 @@ const {isPrivileged} = require('../../utils/permissionsUtils');
 
 /**
  * @param {string} text
+ * @return {{from: string, groupJid: string, inviteCode: string,
+ * inviteExpiration: string}}
  */
 const textToInviteV4 = (text)=>{
   const lines = text.split('\n');
@@ -16,6 +18,7 @@ const groupLinkPattern = new RegExp('http[s]?://chat\.whatsapp\.com/[a-zA-Z0-9]{
 /**
  *
  * @param {string} text
+ * @return {string}
  */
 const textToGroupLink = (text)=>{
   return text.match(groupLinkPattern).toString();

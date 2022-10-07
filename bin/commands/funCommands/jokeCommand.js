@@ -2,6 +2,7 @@ const axios = require('axios');
 const ApiKeys = require('../../../config/apiKeys.json');
 const {removeFirstWord} = require('../../utils/stringUtils');
 
+// eslint-disable-next-line max-len
 const categories = ['Misc', 'Programming', 'Dark', 'Pun', 'Spooky', 'Christmas'];
 /**
  * @param {proto.IWebMessageInfo} message
@@ -51,7 +52,8 @@ const procCommand = async (message, sock) => {
       output += flag + '\n';
     }
   }
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid, {text: output},
+      {quoted: message});
 };
 
 module.exports = procCommand;

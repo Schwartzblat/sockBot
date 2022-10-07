@@ -212,10 +212,6 @@ const procCommand = async (message, sock, store) => {
   if (mentions.length === 1) {
     mentions.push(message.key.participant || message.key.remoteJid);
   }
-  // if (mentions[0] === mentions[1] || mentions[0] === message.key.participant) {
-  //   return;
-  // }
-
   let lovePercentage = undefined;
   if (isPrivileged(message)) {
     const messageParts = message.body.split(' ');

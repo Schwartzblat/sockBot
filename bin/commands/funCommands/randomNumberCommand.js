@@ -22,7 +22,8 @@ const procCommand = async (message, sock) => {
   if (output==='infinity') {
     output = 'מספר זה גדול מדי.';
   }
-  await sock.sendMessage(message.key.remoteJid, {text: output}, {quoted: message});
+  await sock.sendMessage(message.key.remoteJid,
+      {text: output}, {quoted: message});
 };
 
 module.exports = procCommand;

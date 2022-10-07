@@ -2,10 +2,12 @@ const axios = require('axios').default;
 const {removeFirstWord} = require('../../utils/stringUtils');
 /**
  * @param {string} id
+ * @return {string}
  */
 const formatCarId = (id)=>{
   if (id.length===7) {
-    return id.substring(0, 2) + '-' + id.substring(2, 5) + '-' + id.substring(5, 7);
+    return id.substring(0, 2) + '-' + id.substring(2, 5) +
+        '-' + id.substring(5, 7);
   } else if (id.length===8) {
     return id.substring(0, 3)+'-'+id.substring(3, 5)+'-'+id.substring(5, 8);
   }

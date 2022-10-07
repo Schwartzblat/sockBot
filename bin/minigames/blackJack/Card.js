@@ -19,23 +19,54 @@ const Shapes = {
   3: 'לבבות',
   4: 'יהלומים',
 };
+
+/**
+ * @param {number} val
+ * @param {number} shape
+ */
 class Card {
+  /**
+   * @param {number} val
+   * @param {number} shape
+   */
   constructor(val= 0, shape=0) {
     this.value = val;
     this.shape = shape;
   }
+
+  /**
+   * @return {number}
+   */
   getShape() {
     return this.shape;
   }
+
+  /**
+   * @return {number}
+   */
   getValue() {
     return this.value;
   }
+
+  /**
+   * @param {number} shape
+   * @return {void}
+   */
   setShape(shape) {
     this.shape = shape;
   }
+
+  /**
+   * @param {number} val
+   * @return {void}
+   */
   setValue(val) {
     this.value = val;
   }
+
+  /**
+   * @return {string}
+   */
   toString() {
     return Values[this.value] + ' ' + Shapes[this.shape];
   }

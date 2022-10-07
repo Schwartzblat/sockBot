@@ -1,9 +1,10 @@
 const {MiniGame} = require('baileys-minigames');
 const Deck = require('./blackJack/Deck');
 const Participant = require('./blackJack/Participant');
-const messages = {
-  'start': 'ברוך הבא למשחק בלקג\'ק!\nחוקי המשחק:\nאתה והדילר מקבלים 2 קלפים כל אחד והמטרה שלך היא להגיע כמה שיותר קרוב (מלמטה) ל 21.\nשים לב- אס יכול לתפקד כ 11 או כ 1.\nבהצלחה!',
-};
+// const messages = {
+// eslint-disable-next-line max-len
+//   'start': 'ברוך הבא למשחק בלקג\'ק!\nחוקי המשחק:\nאתה והדילר מקבלים 2 קלפים כל אחד והמטרה שלך היא להגיע כמה שיותר קרוב (מלמטה) ל 21.\nשים לב- אס יכול לתפקד כ 11 או כ 1.\nבהצלחה!',
+// };
 const buttons = [
   {buttonId: '0', buttonText: {'displayText': 'Hit'}, type: 1},
   {buttonId: '1', buttonText: {'displayText': 'Stand'}, type: 1},
@@ -28,6 +29,10 @@ class BlackJackSingle extends MiniGame {
     this.deck.shuffle();
     this.startGame();
   }
+
+  /**
+   * @return {Promise<void>}
+   */
   async startGame() {
     // await this.sock.sendMessage(this.chatId, {text: messages['start']});
     this.dealer = new Participant();
@@ -47,6 +52,10 @@ class BlackJackSingle extends MiniGame {
     await this.askForAction();
   }
 
+  /**
+   * @param {boolean} showDealerCards
+   * @return {Promise<void>}
+   */
   async sendStatus(showDealerCards=true) {
     let output = '';
     output += 'הקלפים שלך:\n';
@@ -66,11 +75,18 @@ class BlackJackSingle extends MiniGame {
     await this.sock.sendMessage(this.chatId, {text: output});
   }
 
+  /**
+   * @return {Promise<void>}
+   */
   async askForAction() {
     const message = await this.sock.sendMessage(this.chatId, buttonMessage);
     this.actionId = message.key.id;
   }
 
+  /**
+   * @param {proto.IWebMessageInfo} message
+   * @return {Promise<void>}
+   */
   async procMessage(message) {
     if (message.body==='!סוף_משחק') {
       await this.gameOver(false);
@@ -90,6 +106,9 @@ class BlackJackSingle extends MiniGame {
     }
   }
 
+  /**
+   * @return {Promise<void>}
+   */
   async hit() {
     this.player.addCard(this.deck.getCard());
     await this.sendStatus(false);
@@ -104,6 +123,9 @@ class BlackJackSingle extends MiniGame {
     }
   }
 
+  /**
+   * @return {Promise<void>}
+   */
   async stand() {
     await this.sock.sendMessage(this.chatId, {text: 'הדילר משחק עכשיו...'});
     await sleep(2000);
@@ -128,6 +150,10 @@ class BlackJackSingle extends MiniGame {
     }
   }
 
+  /**
+   * @param {boolean}isWinner
+   * @return {Promise<void>}
+   */
   async gameOver(isWinner=false) {
     super.gameOver();
   }
